@@ -4,13 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.csv.CSVFormat;
 
 @UtilityClass
-class NasdaqBalticCsv {
+class NasdaqBalticCsvUtil {
 
     private static final String[] CSV_HEADERS = {Header.TICKER, Header.NAME, Header.ISIN, Header.CURRENCY,
             Header.MARKET_PLACE, Header.SEGMENT, "Average Price", "Open Price", "High Price", "Low Price",
             "Last close Price", "Last Price", "Price Change(%)", "Best bid", "Best ask", "Trades", "Volume", "Turnover"};
 
-    static final CSVFormat FORMAT = CSVFormat.TDF.withHeader(NasdaqBalticCsv.CSV_HEADERS).withFirstRecordAsHeader();
+    static final CSVFormat FORMAT = CSVFormat.TDF.withHeader(NasdaqBalticCsvUtil.CSV_HEADERS).withFirstRecordAsHeader();
 
     @UtilityClass
     static class Header {

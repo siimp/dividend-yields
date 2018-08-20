@@ -5,11 +5,9 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,12 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class NasdaqBalticService {
+public class NasdaqBalticStockService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Value("${nasdaqbaltic.stock-endpoint}")
     private String nasdaqBalticStockEndpoint;
@@ -39,12 +34,12 @@ public class NasdaqBalticService {
         List<Stock> result = new ArrayList<>();
         for (CSVRecord csvRecord : getCsvRecords()) {
             Stock stock = new Stock();
-            stock.setName(csvRecord.get(NasdaqBalticCsv.Header.NAME));
-            stock.setIsin(csvRecord.get(NasdaqBalticCsv.Header.ISIN));
-            stock.setCurrency(csvRecord.get(NasdaqBalticCsv.Header.CURRENCY));
-            stock.setTicker(csvRecord.get(NasdaqBalticCsv.Header.TICKER));
-            stock.setMarketPlace(csvRecord.get(NasdaqBalticCsv.Header.MARKET_PLACE));
-            stock.setSegment(csvRecord.get(NasdaqBalticCsv.Header.SEGMENT));
+            stock.setName(csvRecord.get(NasdaqBalticCsvUtil.Header.NAME));
+            stock.setIsin(csvRecord.get(NasdaqBalticCsvUtil.Header.ISIN));
+            stock.setCurrency(csvRecord.get(NasdaqBalticCsvUtil.Header.CURRENCY));
+            stock.setTicker(csvRecord.get(NasdaqBalticCsvUtil.Header.TICKER));
+            stock.setMarketPlace(csvRecord.get(NasdaqBalticCsvUtil.Header.MARKET_PLACE));
+            stock.setSegment(csvRecord.get(NasdaqBalticCsvUtil.Header.SEGMENT));
             result.add(stock);
         }
 
@@ -56,12 +51,12 @@ public class NasdaqBalticService {
             LOG.debug("loading local csv file {}", nasdaqBalticEquityList.getFilename());
             return new CSVParser(
                     new BufferedReader(new InputStreamReader(nasdaqBalticEquityList.getInputStream(), StandardCharsets.UTF_16)),
-                    NasdaqBalticCsv.FORMAT);
+                    NasdaqBalticCsvUtil.FORMAT);
         } else {
             LOG.debug("loading remote csv file from {}", nasdaqBalticStockEndpoint);
 
-            String response = restTemplate.getForObject(nasdaqBalticStockEndpoint, String.class);
-            return new CSVParser(new StringReader(response), NasdaqBalticCsv.FORMAT);
+            String response = NasdaqBalticUtil.getRemoteResponse(nasdaqBalticStockEndpoint);
+            return new CSVParser(new StringReader(response), NasdaqBalticCsvUtil.FORMAT);
         }
 
     }

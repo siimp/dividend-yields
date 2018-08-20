@@ -1,6 +1,7 @@
 package ee.siimp.nasdaqbaltic;
 
-import ee.siimp.nasdaqbaltic.common.NasdaqBalticService;
+import ee.siimp.nasdaqbaltic.common.NasdaqBalticDividendService;
+import ee.siimp.nasdaqbaltic.common.NasdaqBalticStockService;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import org.slf4j.Logger;
@@ -12,7 +13,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,8 +25,13 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static final int DIVIDEND_STARTING_YEAR = 2015;
+
     @Autowired
-    private NasdaqBalticService nasdaqBalticService;
+    private NasdaqBalticStockService nasdaqBalticStockService;
+
+    @Autowired
+    private NasdaqBalticDividendService nasdaqBalticDividendService;
 
     @Autowired
     private StockRepository stockRepository;
@@ -33,12 +41,29 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        LOG.info("bootstraping application");
+        updateStockInformation();
+        updateDividendInfromation();
+    }
 
+    private void updateDividendInfromation() {
+        for (int year = DIVIDEND_STARTING_YEAR; year <= LocalDate.now().getYear(); year++) {
+            try {
+                nasdaqBalticDividendService.loadYearDividends(year);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+                // just continue
+            }
+        }
+    }
+
+    private void updateStockInformation() throws IOException {
+        LOG.info("updating stock infromation");
         List<String> existingStockNames = stockRepository.findAll().stream()
                 .map(Stock::getTicker)
                 .collect(Collectors.toList());
 
-        List<Stock> newStocks = nasdaqBalticService.loadAllStocks().stream()
+        List<Stock> newStocks = nasdaqBalticStockService.loadAllStocks().stream()
                 .filter(it -> !existingStockNames.contains(it.getTicker()))
                 .collect(Collectors.toList());
 
@@ -51,6 +76,5 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
                 LOG.warn("stock {} validation failed {}", stock, errors);
             }
         }
-
     }
 }

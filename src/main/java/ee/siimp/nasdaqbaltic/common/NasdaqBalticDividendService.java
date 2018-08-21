@@ -18,6 +18,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
+import javax.transaction.Transactional;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class NasdaqBalticDividendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -90,7 +92,7 @@ public class NasdaqBalticDividendService {
         }
     }
 
-    private void getDividendInfo(String javaScriptDataValue, DividendData dividendDataConsumer) throws ScriptException {
+    private void getDividendInfo(String javaScriptDataValue, DividendDataConsumer consumer) throws ScriptException {
         ScriptContext ctx = new SimpleScriptContext();
         ctx.setBindings(JAVASCRIPT_ENGINE.createBindings(), ScriptContext.ENGINE_SCOPE);
         JAVASCRIPT_ENGINE.eval(javaScriptDataValue, ctx);
@@ -99,7 +101,7 @@ public class NasdaqBalticDividendService {
         if (data.isArray()) {
             data.forEach((k, v) -> {
                 ScriptObjectMirror value = (ScriptObjectMirror) v;
-                dividendDataConsumer.consumeDividendInfo(
+                consumer.accept(
                         (String) value.get(DATA_TICKER),
                         Double.parseDouble((String) value.get(DATA_AMOUNT)),
                         LocalDate.parse((String) value.get(DATA_DATE), DATA_DATE_FORMATTER),
@@ -122,6 +124,6 @@ public class NasdaqBalticDividendService {
 }
 
 @FunctionalInterface
-interface DividendData {
-    void consumeDividendInfo(String ticker, Double amount, LocalDate exDividendDate, String currency);
+interface DividendDataConsumer {
+    void accept(String ticker, Double amount, LocalDate exDividendDate, String currency);
 }

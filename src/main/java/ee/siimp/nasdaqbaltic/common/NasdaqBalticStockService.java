@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,21 +30,31 @@ public class NasdaqBalticStockService {
     @Value("${nasdaqbaltic.equity-list:#{null}}")
     private Resource nasdaqBalticEquityList;
 
-    public List<Stock> loadAllStocks() throws IOException {
+    public List<Stock> loadAllStocks() {
 
         List<Stock> result = new ArrayList<>();
-        for (CSVRecord csvRecord : getCsvRecords()) {
-            Stock stock = new Stock();
-            stock.setName(csvRecord.get(NasdaqBalticCsvUtil.Header.NAME));
-            stock.setIsin(csvRecord.get(NasdaqBalticCsvUtil.Header.ISIN));
-            stock.setCurrency(csvRecord.get(NasdaqBalticCsvUtil.Header.CURRENCY));
-            stock.setTicker(csvRecord.get(NasdaqBalticCsvUtil.Header.TICKER));
-            stock.setMarketPlace(csvRecord.get(NasdaqBalticCsvUtil.Header.MARKET_PLACE));
-            stock.setSegment(csvRecord.get(NasdaqBalticCsvUtil.Header.SEGMENT));
-            result.add(stock);
+        try {
+            for (CSVRecord csvRecord : getCsvRecords()) {
+                Stock stock = getNewStock(csvRecord);
+                result.add(stock);
+            }
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+            return Collections.emptyList();
         }
 
         return result;
+    }
+
+    private Stock getNewStock(CSVRecord csvRecord) {
+        Stock stock = new Stock();
+        stock.setName(csvRecord.get(NasdaqBalticCsvUtil.Header.NAME));
+        stock.setIsin(csvRecord.get(NasdaqBalticCsvUtil.Header.ISIN));
+        stock.setCurrency(csvRecord.get(NasdaqBalticCsvUtil.Header.CURRENCY));
+        stock.setTicker(csvRecord.get(NasdaqBalticCsvUtil.Header.TICKER));
+        stock.setMarketPlace(csvRecord.get(NasdaqBalticCsvUtil.Header.MARKET_PLACE));
+        stock.setSegment(csvRecord.get(NasdaqBalticCsvUtil.Header.SEGMENT));
+        return stock;
     }
 
     private CSVParser getCsvRecords() throws IOException {

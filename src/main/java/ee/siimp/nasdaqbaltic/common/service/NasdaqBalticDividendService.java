@@ -1,17 +1,10 @@
-package ee.siimp.nasdaqbaltic.common;
+package ee.siimp.nasdaqbaltic.common.service;
 
-import ee.siimp.nasdaqbaltic.dividend.Dividend;
-import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
-import ee.siimp.nasdaqbaltic.stock.Stock;
-import ee.siimp.nasdaqbaltic.stock.StockRepository;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
-
+import java.lang.invoke.MethodHandles;
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -19,11 +12,21 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 import javax.transaction.Transactional;
-import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+
+import ee.siimp.nasdaqbaltic.dividend.Dividend;
+import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
+import ee.siimp.nasdaqbaltic.stock.Stock;
+import ee.siimp.nasdaqbaltic.stock.StockRepository;
+
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @Transactional
@@ -61,23 +64,27 @@ public class NasdaqBalticDividendService {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private RestTemplate restTemplate;
 
-    public void loadYearDividends(int year) throws ScriptException, MalformedURLException {
-        String endpoint = UriComponentsBuilder.fromHttpUrl(nasdaqBalticDividendEndpoint)
-                .queryParam("year", year).toUriString();
+    public void loadYearDividends(int year) throws ScriptException {
+        URI endpoint = UriComponentsBuilder.fromHttpUrl(nasdaqBalticDividendEndpoint)
+                .queryParam("year", year).build().toUri();
 
         LOG.info("loading year {} dividends from {}", year, endpoint);
 
-        String response = NasdaqBalticUtil.getRemoteResponse(endpoint);
+        String response = restTemplate.getForObject(endpoint, String.class);
 
-        Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
-        if (javaScriptDataValueOptional.isPresent()) {
-            getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency) -> {
-                stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
-                    LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
-                    saveNewDividend(amount, exDividendDate, currency, stockId);
-                });
-            });
+        if (StringUtils.hasText(response)) {
+            Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
+            if (javaScriptDataValueOptional.isPresent()) {
+                getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency) ->
+                    stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
+                        LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
+                        saveNewDividend(amount, exDividendDate, currency, stockId);
+                    })
+                );
+            }
         }
     }
 

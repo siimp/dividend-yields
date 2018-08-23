@@ -19,6 +19,6 @@ public class DividendUpdateJob {
     @Scheduled(cron = "0 0 6 * * *")
     public void execute() {
         LOG.info("executing");
-        dividendService.updateDividendInfromation();
+        dividendService.updateDividendInformation();
     }
 }

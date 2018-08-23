@@ -31,7 +31,7 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
         if (Boolean.TRUE.equals(loadInitialData)) {
             stockService.updateStockInformation();
-            dividendService.updateDividendInfromation();
+            dividendService.updateDividendInformation();
         }
 
         LOG.info("bootstraping finished");

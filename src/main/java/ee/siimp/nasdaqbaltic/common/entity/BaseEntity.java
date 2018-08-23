@@ -1,19 +1,17 @@
-package ee.siimp.nasdaqbaltic.common;
+package ee.siimp.nasdaqbaltic.common.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -26,13 +24,10 @@ public abstract class BaseEntity {
     private Long id;
 
     @CreatedDate
-    @NotNull
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, columnDefinition = "timestamp with time zone")
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
-    @NotNull
-    @Column(nullable = false)
+    @Column(columnDefinition = "timestamp with time zone")
     private LocalDateTime updatedDate;
 
 }

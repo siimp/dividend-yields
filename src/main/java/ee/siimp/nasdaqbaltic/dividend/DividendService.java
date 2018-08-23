@@ -1,6 +1,6 @@
 package ee.siimp.nasdaqbaltic.dividend;
 
-import ee.siimp.nasdaqbaltic.common.NasdaqBalticDividendService;
+import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticDividendService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class DividendService {
 
     private DividendRepository dividendRepository;
 
-    public void updateDividendInfromation() {
+    public void updateDividendInformation() {
         LOG.info("updating dividend information");
         int currentYear = LocalDate.now().getYear();
         for (int year = DIVIDEND_STARTING_YEAR; year <= currentYear; year++) {

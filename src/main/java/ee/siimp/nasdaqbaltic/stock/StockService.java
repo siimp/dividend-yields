@@ -1,6 +1,6 @@
 package ee.siimp.nasdaqbaltic.stock;
 
-import ee.siimp.nasdaqbaltic.common.NasdaqBalticStockService;
+import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticStockService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

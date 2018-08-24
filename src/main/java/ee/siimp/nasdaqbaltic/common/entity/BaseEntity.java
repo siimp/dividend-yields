@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
@@ -27,7 +28,8 @@ public abstract class BaseEntity {
     @Column(nullable = false, updatable = false, columnDefinition = "timestamp with time zone")
     private LocalDateTime createdDate;
 
-    @Column(columnDefinition = "timestamp with time zone")
+    @LastModifiedDate
+    @Column(nullable = false, columnDefinition = "timestamp with time zone")
     private LocalDateTime updatedDate;
 
 }

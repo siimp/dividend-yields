@@ -1,4 +1,4 @@
-package ee.siimp.nasdaqbaltic.dividend;
+package ee.siimp.nasdaqbaltic.stockprice;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -10,16 +10,16 @@ import java.lang.invoke.MethodHandles;
 
 @Component
 @AllArgsConstructor
-public class DividendUpdateJob {
+public class StockPriceJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private DividendService dividendService;
+    private StockPriceService stockPriceService;
 
     @Scheduled(cron = "0 0 6 * * *")
     public void execute() {
         LOG.info("executing");
-        dividendService.updateDividendInformation();
+        stockPriceService.collectStockPricesAtExDividend();
         LOG.info("done");
     }
 }

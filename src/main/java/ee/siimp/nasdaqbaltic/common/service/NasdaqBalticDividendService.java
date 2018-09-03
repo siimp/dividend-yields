@@ -1,23 +1,9 @@
 package ee.siimp.nasdaqbaltic.common.service;
 
-import java.lang.invoke.MethodHandles;
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
-import javax.transaction.Transactional;
-
 import ee.siimp.nasdaqbaltic.dividend.Dividend;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
-
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +13,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.persistence.EntityManager;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+import javax.transaction.Transactional;
+import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -79,16 +79,16 @@ public class NasdaqBalticDividendService {
             Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
             if (javaScriptDataValueOptional.isPresent()) {
                 getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency) ->
-                    stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
-                        LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
-                        saveNewDividend(amount, exDividendDate, currency, stockId);
-                    })
+                        stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
+                            LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
+                            saveNewDividend(amount, exDividendDate, currency, stockId);
+                        })
                 );
             }
         }
     }
 
-    private void saveNewDividend(Double amount, LocalDate exDividendDate, String currency, Long stockId) {
+    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency, Long stockId) {
         if (!dividendRepository.existsByStockIdAndExDividendDate(stockId, exDividendDate)) {
             Dividend dividend = new Dividend();
             dividend.setAmount(amount);
@@ -110,7 +110,7 @@ public class NasdaqBalticDividendService {
                 ScriptObjectMirror value = (ScriptObjectMirror) v;
                 consumer.accept(
                         (String) value.get(DATA_TICKER),
-                        Double.parseDouble((String) value.get(DATA_AMOUNT)),
+                        new BigDecimal((String) value.get(DATA_AMOUNT)),
                         LocalDate.parse((String) value.get(DATA_DATE), DATA_DATE_FORMATTER),
                         (String) value.get(DATA_CURRENCY));
             });
@@ -132,5 +132,5 @@ public class NasdaqBalticDividendService {
 
 @FunctionalInterface
 interface DividendDataConsumer {
-    void accept(String ticker, Double amount, LocalDate exDividendDate, String currency);
+    void accept(String ticker, BigDecimal amount, LocalDate exDividendDate, String currency);
 }

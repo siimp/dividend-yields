@@ -3,11 +3,16 @@ package ee.siimp.nasdaqbaltic.stock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
-    @Query("select s.id from #{#entityName} s where ticker = ?1")
+    @Query("select stock.id from #{#entityName} stock where ticker = ?1")
     Optional<Long> findIdByTicker(String ticker);
 
+    @Query("select stock from #{#entityName} stock " +
+            "inner join Dividend dividend ON dividend.stock = stock " +
+            "inner join StockPrice price ON (price.stock = stock AND price.date = dividend.exDividendDate)")
+    List<Stock> findAllWithDividends();
 }

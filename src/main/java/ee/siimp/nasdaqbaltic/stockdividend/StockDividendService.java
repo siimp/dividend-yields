@@ -1,5 +1,6 @@
 package ee.siimp.nasdaqbaltic.stockdividend;
 
+import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -18,6 +19,8 @@ public class StockDividendService {
     private StockRepository stockRepository;
 
     public List<StockDividendResultDto> getAll() {
+
+        List<Stock> stocks = stockRepository.findAllWithDividends();
 
         return null;
     }

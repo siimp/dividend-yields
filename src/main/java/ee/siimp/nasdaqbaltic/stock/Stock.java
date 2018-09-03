@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import ee.siimp.nasdaqbaltic.common.entity.BaseEntity;
 
 import ee.siimp.nasdaqbaltic.dividend.Dividend;
+import ee.siimp.nasdaqbaltic.stockprice.StockPrice;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -49,5 +50,8 @@ public class Stock extends BaseEntity {
 
     @OneToMany(mappedBy = "stock")
     private List<Dividend> dividends;
+
+    @OneToMany(mappedBy = "stock")
+    private List<StockPrice> prices;
 
 }

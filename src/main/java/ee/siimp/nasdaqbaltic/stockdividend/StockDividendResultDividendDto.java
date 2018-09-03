@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -13,6 +14,6 @@ public class StockDividendResultDividendDto {
 
     private LocalDate exDividendDate;
 
-    private Double amount;
+    private BigDecimal amount;
 
 }

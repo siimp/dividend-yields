@@ -9,4 +9,5 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query("select s.id from #{#entityName} s where ticker = ?1")
     Optional<Long> findIdByTicker(String ticker);
+
 }

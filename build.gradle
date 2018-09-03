@@ -27,7 +27,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.apache.commons:commons-csv:1.5')
-	compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile('javax.xml.bind:jaxb-api:2.3.0')
 
 	compileOnly('org.projectlombok:lombok')
 	compileOnly('org.springframework.boot:spring-boot-devtools')
@@ -36,5 +36,4 @@ dependencies {
 	runtime('org.postgresql:postgresql')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('io.projectreactor:reactor-test')
 }

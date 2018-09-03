@@ -2,6 +2,8 @@ package ee.siimp.nasdaqbaltic.dividend;
 
 import java.time.LocalDate;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -21,7 +23,8 @@ import lombok.Setter;
 public class Dividend extends BaseEntity {
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, updatable = false)
     private Stock stock;
 
     @NotNull

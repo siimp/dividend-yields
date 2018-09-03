@@ -1,19 +1,18 @@
 package ee.siimp.nasdaqbaltic.stockdividend;
 
-import java.time.LocalDate;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
+@AllArgsConstructor
 public class StockDividendResultDividendDto {
 
-    private LocalDate dividendDate;
+    private LocalDate exDividendDate;
 
-    private Double dividendAmount;
+    private Double amount;
 
-    private Double stockPriceAtExDividend;
-
-    private Double stockPriceLatest;
 }

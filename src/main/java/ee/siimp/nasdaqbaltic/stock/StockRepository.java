@@ -13,6 +13,6 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query("select stock from #{#entityName} stock " +
             "inner join Dividend dividend ON dividend.stock = stock " +
-            "inner join StockPrice price ON (price.stock = stock AND price.date = dividend.exDividendDate)")
+            "inner join StockPrice stockPrice ON (stockPrice.stock = stock AND stockPrice.date = dividend.exDividendDate)")
     List<Stock> findAllWithDividends();
 }

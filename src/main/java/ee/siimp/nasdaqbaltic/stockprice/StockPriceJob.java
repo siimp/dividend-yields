@@ -16,7 +16,8 @@ public class StockPriceJob {
 
     private StockPriceService stockPriceService;
 
-    @Scheduled(cron = "0 0 6 * * *")
+    //@Scheduled(cron = "0 0 6 * * *")
+    @Scheduled(fixedRate = 30000)
     public void execute() {
         LOG.info("executing");
         stockPriceService.collectStockPricesAtExDividend();

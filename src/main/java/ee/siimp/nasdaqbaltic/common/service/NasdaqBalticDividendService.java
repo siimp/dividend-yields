@@ -34,6 +34,8 @@ public class NasdaqBalticDividendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static final String URI_QUERY_PARAM_YEAR = "year";
+
     private static final ScriptEngine JAVASCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("nashorn");
 
     private static final String DATA_JAVASCRIPT_ATTRIBUTE = "data";
@@ -69,7 +71,7 @@ public class NasdaqBalticDividendService {
 
     public void loadYearDividends(int year) throws ScriptException {
         URI endpoint = UriComponentsBuilder.fromHttpUrl(nasdaqBalticDividendEndpoint)
-                .queryParam("year", year).build().toUri();
+                .queryParam(URI_QUERY_PARAM_YEAR, year).build().toUri();
 
         LOG.info("loading year {} dividends from {}", year, endpoint);
 

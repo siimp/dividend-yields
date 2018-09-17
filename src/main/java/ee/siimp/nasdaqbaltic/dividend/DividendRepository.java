@@ -1,5 +1,6 @@
 package ee.siimp.nasdaqbaltic.dividend;
 
+import ee.siimp.nasdaqbaltic.dividend.dto.DividendStockPriceDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,10 +15,11 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
     @Query("select count(*) > 0 from #{#entityName} where YEAR(exDividendDate) = ?1")
     boolean existsByYear(int year);
 
-    //TODO: use appropriate dto
-    @Query("select dividend from #{#entityName} dividend " +
+    @Query("select stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
+            "from #{#entityName} dividend " +
+            "inner join dividend.stock stock " +
             "left join StockPrice stockPrice on (stockPrice.stock = dividend.stock and stockPrice.date = dividend.exDividendDate) " +
             "where stockPrice is null")
-    List<Dividend> findDividendsWithoutStockPriceInfo();
+    List<DividendStockPriceDto> findDividendsWithoutStockPriceInfo();
 
 }

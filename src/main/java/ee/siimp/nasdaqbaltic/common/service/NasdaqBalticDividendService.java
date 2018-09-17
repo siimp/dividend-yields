@@ -1,5 +1,6 @@
 package ee.siimp.nasdaqbaltic.common.service;
 
+import ee.siimp.nasdaqbaltic.common.utils.DateUtils;
 import ee.siimp.nasdaqbaltic.dividend.Dividend;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
@@ -25,7 +26,6 @@ import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -49,8 +49,6 @@ public class NasdaqBalticDividendService {
     private static final String DATA_AMOUNT = "amount";
 
     private static final String DATA_CURRENCY = "ccy";
-
-    private static final DateTimeFormatter DATA_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private static final String DATA_DATE = "starts";
 
@@ -77,6 +75,10 @@ public class NasdaqBalticDividendService {
 
         String response = restTemplate.getForObject(endpoint, String.class);
 
+        handleResponse(response);
+    }
+
+    private void handleResponse(String response) throws ScriptException {
         if (StringUtils.hasText(response)) {
             Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
             if (javaScriptDataValueOptional.isPresent()) {
@@ -113,7 +115,7 @@ public class NasdaqBalticDividendService {
                 consumer.accept(
                         (String) value.get(DATA_TICKER),
                         new BigDecimal((String) value.get(DATA_AMOUNT)),
-                        LocalDate.parse((String) value.get(DATA_DATE), DATA_DATE_FORMATTER),
+                        DateUtils.parseEstonianDate((String) value.get(DATA_DATE)),
                         (String) value.get(DATA_CURRENCY));
             });
         }

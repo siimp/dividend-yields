@@ -1,7 +1,8 @@
 package ee.siimp.nasdaqbaltic.stockprice;
 
-import ee.siimp.nasdaqbaltic.dividend.Dividend;
+import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticStockPriceService;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
+import ee.siimp.nasdaqbaltic.dividend.dto.DividendStockPriceDto;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,20 @@ public class StockPriceService {
 
     private DividendRepository dividendRepository;
 
+    private NasdaqBalticStockPriceService nasdaqBalticStockPriceService;
+
     public void collectStockPricesAtExDividend() {
         LOG.info("collecting stock prices without dividend");
-        List<Dividend> dividendsWithoutStockPriceInfo = dividendRepository.findDividendsWithoutStockPriceInfo();
+        List<DividendStockPriceDto> dividendsWithoutStockPriceInfo = dividendRepository.findDividendsWithoutStockPriceInfo();
         LOG.info("{} dividends are without stock price info", dividendsWithoutStockPriceInfo.size());
-        for (Dividend dividend : dividendsWithoutStockPriceInfo) {
+        for (DividendStockPriceDto dto : dividendsWithoutStockPriceInfo) {
+            nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
 
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                LOG.error(e.getMessage(), e);
+            }
         }
-
     }
 }

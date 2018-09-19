@@ -28,11 +28,15 @@ public class StockPriceService {
         for (DividendStockPriceDto dto : dividendsWithoutStockPriceInfo) {
             nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                LOG.error(e.getMessage(), e);
-            }
+            sleep();
+        }
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 }

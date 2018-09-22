@@ -12,7 +12,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     @Query("select stock.id from #{#entityName} stock where ticker = ?1")
     Optional<Long> findIdByTicker(String ticker);
 
-    @Query("select stock.name as name, stock.ticker as ticker, " +
+    @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, " +
             "stockPrice.price as stockPriceAtExDividend, " +
             "((dividend.amount/stockPrice.price) * 100) as dividendYield " +
@@ -24,7 +24,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<DividendYieldResultDto> findAllWithDividendYieldsByYear(Integer year);
 
 
-    @Query("select stock.name as name, stock.ticker as ticker, " +
+    @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, " +
             "stockPrice.price as stockPriceAtExDividend, " +
             "((dividend.amount/stockPrice.price) * 100) as dividendYield " +

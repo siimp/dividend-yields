@@ -9,6 +9,8 @@ public interface DividendYieldResultDto {
 
     String getTicker();
 
+    String getIsin();
+
     LocalDate getExDividendDate();
 
     BigDecimal getDividendAmount();

@@ -1,6 +1,7 @@
 package ee.siimp.nasdaqbaltic.dividend;
 
 import ee.siimp.nasdaqbaltic.dividend.dto.DividendStockPriceDto;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,4 +23,7 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
             "where stockPrice is null")
     List<DividendStockPriceDto> findDividendsWithoutStockPriceInfo();
 
+    @CacheEvict(cacheNames = "dividend-yield")
+    @Override
+    <S extends Dividend> S save(S entity);
 }

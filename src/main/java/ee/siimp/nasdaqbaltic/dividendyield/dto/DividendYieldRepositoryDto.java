@@ -19,5 +19,7 @@ public interface DividendYieldRepositoryDto {
 
     BigDecimal getDividendYield();
 
+    boolean isCapitalDecrease();
+
 
 }

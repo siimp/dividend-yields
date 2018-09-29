@@ -41,6 +41,7 @@ public class DividendYieldResultDto {
         yieldResult.setDividendYield(dto.getDividendYield());
         yieldResult.setExDividendDate(dto.getExDividendDate());
         yieldResult.setStockPriceAtExDividend(dto.getStockPriceAtExDividend());
+        yieldResult.setCapitalDecrease(dto.isCapitalDecrease());
         result.getDividends().add(yieldResult);
     }
 

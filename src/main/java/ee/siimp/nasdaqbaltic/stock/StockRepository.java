@@ -13,7 +13,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     Optional<Long> findIdByTicker(String ticker);
 
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
-            "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, " +
+            "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
             "stockPrice.price as stockPriceAtExDividend, " +
             "((dividend.amount/stockPrice.price) * 100) as dividendYield " +
             "from #{#entityName} stock " +
@@ -25,7 +25,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
 
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
-            "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, " +
+            "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
             "stockPrice.price as stockPriceAtExDividend, " +
             "((dividend.amount/stockPrice.price) * 100) as dividendYield " +
             "from #{#entityName} stock " +

@@ -14,7 +14,7 @@ public class DividendYieldResultDto {
     private String name;
     private String ticker;
     private String isin;
-    private BigDecimal totalDividendYield;
+    private BigDecimal totalDividendYield = BigDecimal.ZERO;
     private List<DividendYieldDividendDto> dividends = new ArrayList<>();
 
     public static DividendYieldResultDto of(DividendYieldRepositoryDto dto) {
@@ -22,8 +22,6 @@ public class DividendYieldResultDto {
         result.setName(dto.getName());
         result.setTicker(dto.getTicker());
         result.setIsin(dto.getIsin());
-        result.setTotalDividendYield(dto.getDividendYield());
-
         addDividend(dto, result);
 
         return result;

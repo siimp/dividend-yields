@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -51,6 +52,10 @@ public class NasdaqBalticDividendService {
     private static final String DATA_CURRENCY = "ccy";
 
     private static final String DATA_DATE = "starts";
+
+    private static final String DATA_TYPE = "type";
+
+    private static final String DATA_TYPE_CAPITAL_DECREASE = "capital-decrease";
 
     @Value("${nasdaqbaltic.dividend-endpoint}")
     private String nasdaqBalticDividendEndpoint;
@@ -82,17 +87,17 @@ public class NasdaqBalticDividendService {
         if (StringUtils.hasText(response)) {
             Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
             if (javaScriptDataValueOptional.isPresent()) {
-                getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency) ->
+                getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency, isCapitalDecrease) ->
                         stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
                             LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
-                            saveNewDividend(amount, exDividendDate, currency, stockId);
+                            saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease);
                         })
                 );
             }
         }
     }
 
-    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency, Long stockId) {
+    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency, Long stockId, boolean isCapitalDecrease) {
         if (!dividendRepository.existsByStockIdAndExDividendDate(stockId, exDividendDate)) {
             Dividend dividend = new Dividend();
             dividend.setAmount(amount);
@@ -100,6 +105,14 @@ public class NasdaqBalticDividendService {
             dividend.setStock(em.getReference(Stock.class, stockId));
             dividend.setCurrency(currency);
             dividendRepository.save(dividend);
+        } else {
+            LOG.info("dividend with stock id {} and ex-dividend date {} already exist. isCapitalDecrease = {}",
+                    stockId, exDividendDate, isCapitalDecrease);
+            if (isCapitalDecrease) {
+                Dividend dividend = dividendRepository.findByStockIdAndExDividendDate(stockId, exDividendDate);
+                dividend.setCapitalDecrease(true);
+                dividendRepository.save(dividend);
+            }
         }
     }
 
@@ -112,12 +125,24 @@ public class NasdaqBalticDividendService {
         if (data.isArray()) {
             data.forEach((k, v) -> {
                 ScriptObjectMirror value = (ScriptObjectMirror) v;
-                consumer.accept(
-                        (String) value.get(DATA_TICKER),
-                        new BigDecimal((String) value.get(DATA_AMOUNT)),
-                        DateUtils.parseEstonianDate((String) value.get(DATA_DATE)),
-                        (String) value.get(DATA_CURRENCY));
+                assertAndAcceptDividendInfo(consumer, value);
             });
+        }
+    }
+
+    private void assertAndAcceptDividendInfo(DividendDataConsumer consumer, ScriptObjectMirror value) {
+        String ticker = (String) value.get(DATA_TICKER);
+        String amount = (String) value.get(DATA_AMOUNT);
+        String date = (String) value.get(DATA_DATE);
+        String currency = (String) value.get(DATA_CURRENCY);
+        String type = (String) value.get(DATA_TYPE);
+
+        if (Stream.of(ticker, amount, date, currency, type).allMatch(StringUtils::hasText)) {
+            consumer.accept(ticker, new BigDecimal(amount), DateUtils.parseEstonianDate(date),
+                    currency, DATA_TYPE_CAPITAL_DECREASE.equals(type));
+        } else {
+            LOG.error("one of the dividend values has no content ticker={}, amount={}, date={}, currency={}, type={}",
+                    ticker, amount, date, currency, type);
         }
     }
 
@@ -136,5 +161,5 @@ public class NasdaqBalticDividendService {
 
 @FunctionalInterface
 interface DividendDataConsumer {
-    void accept(String ticker, BigDecimal amount, LocalDate exDividendDate, String currency);
+    void accept(String ticker, BigDecimal amount, LocalDate exDividendDate, String currency, boolean isCapitalDecrease);
 }

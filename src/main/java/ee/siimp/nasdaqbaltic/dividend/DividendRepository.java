@@ -12,6 +12,8 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
 
     boolean existsByStockIdAndExDividendDate(Long stockId, LocalDate exDividendDate);
 
+    Dividend findByStockIdAndExDividendDate(Long stockId, LocalDate exDividendDate);
+
     //limit is not supported by @Query
     @Query("select count(*) > 0 from #{#entityName} where YEAR(exDividendDate) = ?1")
     boolean existsByYear(int year);
@@ -26,4 +28,5 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
     @CacheEvict(cacheNames = "dividend-yield")
     @Override
     <S extends Dividend> S save(S entity);
+
 }

@@ -17,18 +17,20 @@ public class DividendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final int DIVIDEND_STARTING_YEAR = 2015;
+    private static final int INFORMATION_PERIOD_IN_YEARS = 4;
 
     private NasdaqBalticDividendService nasdaqBalticDividendService;
 
     private DividendRepository dividendRepository;
 
     public void updateDividendInformation() {
-        LOG.info("updating dividend information");
-        int currentYear = LocalDate.now().getYear();
-        for (int year = DIVIDEND_STARTING_YEAR; year <= currentYear; year++) {
+        int toYear = LocalDate.now().getYear() + 1;
+        int fromYear = toYear - INFORMATION_PERIOD_IN_YEARS;
+        LOG.info("updating dividend information from year {} to year {}", fromYear, toYear);
+
+        for (int year = fromYear; year <= toYear; year++) {
             try {
-                if (year == currentYear || !dividendRepository.existsByYear(year)) {
+                if (isUpdateNeededForYear(year)) {
                     nasdaqBalticDividendService.loadYearDividends(year);
                 }
             } catch (Exception e) {
@@ -36,5 +38,10 @@ public class DividendService {
                 // just continue
             }
         }
+    }
+
+    private boolean isUpdateNeededForYear(int year) {
+        int currentYear = LocalDate.now().getYear();
+        return year >= currentYear || !dividendRepository.existsByYear(year);
     }
 }

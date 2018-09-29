@@ -1,23 +1,48 @@
 package ee.siimp.nasdaqbaltic.dividendyield.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface DividendYieldResultDto {
+@Getter
+@Setter
+public class DividendYieldResultDto {
 
-    String getName();
+    private String name;
+    private String ticker;
+    private String isin;
+    private BigDecimal totalDividendYield;
+    private List<DividendYieldDividendDto> dividends = new ArrayList<>();
 
-    String getTicker();
+    public static DividendYieldResultDto of(DividendYieldRepositoryDto dto) {
+        DividendYieldResultDto result = new DividendYieldResultDto();
+        result.setName(dto.getName());
+        result.setTicker(dto.getTicker());
+        result.setIsin(dto.getIsin());
+        result.setTotalDividendYield(dto.getDividendYield());
 
-    String getIsin();
+        addDividend(dto, result);
 
-    LocalDate getExDividendDate();
+        return result;
+    }
 
-    BigDecimal getDividendAmount();
+    public void add(DividendYieldRepositoryDto dto) {
+        addDividend(dto, this);
+    }
 
-    BigDecimal getStockPriceAtExDividend();
+    private static void addDividend(DividendYieldRepositoryDto dto, DividendYieldResultDto result) {
+        result.setTotalDividendYield(result.getTotalDividendYield().add(dto.getDividendYield()));
 
-    BigDecimal getDividendYield();
+        DividendYieldDividendDto yieldResult = new DividendYieldDividendDto();
+        yieldResult.setDividendAmount(dto.getDividendAmount());
+        yieldResult.setDividendYield(dto.getDividendYield());
+        yieldResult.setExDividendDate(dto.getExDividendDate());
+        yieldResult.setStockPriceAtExDividend(dto.getStockPriceAtExDividend());
+        result.getDividends().add(yieldResult);
+    }
 
 
 }

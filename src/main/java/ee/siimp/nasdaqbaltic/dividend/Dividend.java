@@ -40,4 +40,7 @@ public class Dividend extends BaseEntity {
     @NotNull
     private String currency;
 
+    @NotNull
+    private boolean capitalDecrease = false;
+
 }

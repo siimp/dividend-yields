@@ -1,9 +1,7 @@
 package ee.siimp.nasdaqbaltic;
 
 import ee.siimp.nasdaqbaltic.dividend.DividendService;
-import ee.siimp.nasdaqbaltic.dividend.DividendUpdateJob;
 import ee.siimp.nasdaqbaltic.stock.StockService;
-import ee.siimp.nasdaqbaltic.stockprice.StockPriceJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,9 +25,6 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
     @Value("${nasdaqbaltic.load-initial-data}")
     private Boolean loadInitialData;
 
-    @Autowired
-    private StockPriceJob stockPriceJob;
-
     @Override
     public void afterPropertiesSet() {
         LOG.info("bootstraping application");
@@ -38,8 +33,6 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
             stockService.updateStockInformation();
             dividendService.updateDividendInformation();
         }
-
-        stockPriceJob.execute();
 
         LOG.info("bootstraping finished");
     }

@@ -10,14 +10,14 @@ import java.lang.invoke.MethodHandles;
 
 @Component
 @AllArgsConstructor
-public class StockPriceJob {
+class StockPriceJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private StockPriceService stockPriceService;
 
     @Scheduled(cron = "0 0 6 * * *")
-    public void execute() {
+    void execute() {
         LOG.info("executing");
         stockPriceService.collectStockPricesAtExDividend();
         LOG.info("done");

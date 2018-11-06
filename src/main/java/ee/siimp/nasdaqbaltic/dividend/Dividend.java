@@ -2,6 +2,7 @@ package ee.siimp.nasdaqbaltic.dividend;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -34,6 +35,7 @@ public class Dividend extends BaseEntity {
 
     @NotNull
     @Min(0)
+    @Column(precision = 7, scale = 5)
     private BigDecimal amount;
 
     @NotBlank

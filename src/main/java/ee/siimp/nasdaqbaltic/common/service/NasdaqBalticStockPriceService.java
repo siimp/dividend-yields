@@ -23,7 +23,9 @@ import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,6 +37,7 @@ public class NasdaqBalticStockPriceService {
     private static final String URI_QUERY_PARAM_INSTRUMENT = "instrument";
     private static final String URI_QUERY_PARAM_DATE_START = "start";
     private static final String URI_QUERY_PARAM_DATE_END = "end";
+    private static final int MAX_DAYS_TO_TRY_ON_VALUE_ABSENCE = 2;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -55,33 +58,60 @@ public class NasdaqBalticStockPriceService {
             return;
         }
 
-        URI endpoint = UriComponentsBuilder.fromHttpUrl(nasdaqBalticStockPriceEndpoint)
-                .queryParam(URI_QUERY_PARAM_INSTRUMENT, stockIsin)
-                .queryParam(URI_QUERY_PARAM_DATE_START, DateUtils.formatEstonianDate(date))
-                .queryParam(URI_QUERY_PARAM_DATE_END, DateUtils.formatEstonianDate(date))
-                .build().toUri();
-        LOG.info("loading price for {} from {}", stockIsin, endpoint);
+        List<CSVRecord> csvRecords = getCsvRecords(stockIsin, date);
 
+        if (CollectionUtils.isEmpty(csvRecords)) {
+            int daysToSubtract = DayOfWeek.MONDAY.equals(date.getDayOfWeek()) ? 3 : 1;
+            for (; daysToSubtract < daysToSubtract + MAX_DAYS_TO_TRY_ON_VALUE_ABSENCE
+                    && CollectionUtils.isEmpty(csvRecords); daysToSubtract++) {
+                LocalDate newDate = date.minusDays(daysToSubtract);
+                LOG.info("using stock price from {} instead of {} for stock id = {}", newDate, date, stockId);
+                csvRecords = getCsvRecords(stockIsin, newDate);
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(csvRecords)) {
+            saveStockPrice(stockId, date, csvRecords);
+        }
+    }
+
+    private List<CSVRecord> getCsvRecords(String stockIsin, LocalDate date) {
+        URI endpoint = getEndpoint(stockIsin, date);
+        LOG.info("loading price for {} from {}", stockIsin, endpoint);
         String response = restTemplate.getForObject(endpoint, String.class);
 
-        try {
-            List<CSVRecord> csvRecords = getCsvRecord(response).getRecords();
+        return getCsvRecordsFromResponse(response);
+    }
 
+    private List<CSVRecord> getCsvRecordsFromResponse(String response) {
+        try {
+            List<CSVRecord> csvRecords = new CSVParser(new StringReader(response),
+                    NasdaqBalticStockPriceCsv.FORMAT).getRecords();
             if (CollectionUtils.isEmpty(csvRecords)) {
                 LOG.error("CSV is empty");
-                return;
             } else if (csvRecords.size() != 1) {
                 LOG.error("CSV does not contain single record (size = {})", csvRecords.size());
-                return;
-            }
-
-            for (CSVRecord csvRecord : csvRecords) {
-                saveNewStockPrice(stockId, date, new BigDecimal(csvRecord.get(NasdaqBalticStockPriceCsv.Header.LAST)));
+            } else {
+                return csvRecords;
             }
         } catch (IOException | RuntimeException e) {
             LOG.error(e.getMessage(), e);
         }
+        return Collections.emptyList();
+    }
 
+    private URI getEndpoint(String stockIsin, LocalDate date) {
+        return UriComponentsBuilder.fromHttpUrl(nasdaqBalticStockPriceEndpoint)
+                .queryParam(URI_QUERY_PARAM_INSTRUMENT, stockIsin)
+                .queryParam(URI_QUERY_PARAM_DATE_START, DateUtils.formatEstonianDate(date))
+                .queryParam(URI_QUERY_PARAM_DATE_END, DateUtils.formatEstonianDate(date))
+                .build().toUri();
+    }
+
+    private void saveStockPrice(Long stockId, LocalDate date, List<CSVRecord> csvRecords) {
+        for (CSVRecord csvRecord : csvRecords) {
+            saveNewStockPrice(stockId, date, new BigDecimal(csvRecord.get(NasdaqBalticStockPriceCsv.Header.LAST)));
+        }
     }
 
     private void saveNewStockPrice(Long stockId, LocalDate date, BigDecimal price) {
@@ -91,10 +121,6 @@ public class NasdaqBalticStockPriceService {
         stockPrice.setPrice(price);
         stockPrice.setStock(em.getReference(Stock.class, stockId));
         stockPriceRepository.save(stockPrice);
-    }
-
-    private CSVParser getCsvRecord(String response) throws IOException {
-        return new CSVParser(new StringReader(response), NasdaqBalticStockPriceCsv.FORMAT);
     }
 
 }

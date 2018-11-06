@@ -88,30 +88,35 @@ public class NasdaqBalticDividendService {
             Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
             if (javaScriptDataValueOptional.isPresent()) {
                 getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency, isCapitalDecrease) ->
-                        stockRepository.findIdByTicker(ticker).ifPresent(stockId -> {
-                            LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
-                            saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease);
-                        })
+                        stockRepository.findIdByTicker(ticker).ifPresent(stockId ->
+                            saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease, ticker)
+                        )
                 );
             }
         }
     }
 
-    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency, Long stockId, boolean isCapitalDecrease) {
+    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency,
+                                 Long stockId, boolean isCapitalDecrease, String ticker) {
         if (!dividendRepository.existsByStockIdAndExDividendDate(stockId, exDividendDate)) {
+            LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
             Dividend dividend = new Dividend();
             dividend.setAmount(amount);
             dividend.setExDividendDate(exDividendDate);
             dividend.setStock(em.getReference(Stock.class, stockId));
             dividend.setCurrency(currency);
+            dividend.setCapitalDecrease(isCapitalDecrease);
             dividendRepository.save(dividend);
         } else {
-            LOG.info("dividend with stock id {} and ex-dividend date {} already exist. isCapitalDecrease = {}",
-                    stockId, exDividendDate, isCapitalDecrease);
             if (isCapitalDecrease) {
+                // in case of capital decrease input data has two seperate events for that (Dividend ex-date and Capital decrease ex-date)
+                LOG.info("marking dividend for {} with amount {} on {} as capital decrease", ticker, amount, exDividendDate);
                 Dividend dividend = dividendRepository.findByStockIdAndExDividendDate(stockId, exDividendDate);
                 dividend.setCapitalDecrease(true);
                 dividendRepository.save(dividend);
+            } else {
+                LOG.info("dividend for {} with stock id {} and ex-dividend date {} already exist. isCapitalDecrease = {}",
+                        ticker, stockId, exDividendDate, isCapitalDecrease);
             }
         }
     }
@@ -147,13 +152,13 @@ public class NasdaqBalticDividendService {
     }
 
     private Optional<String> getDataJavascriptValue(String response) {
-        Integer startIndex = response.indexOf(DATA_JAVASCRIPT_START);
+        int startIndex = response.indexOf(DATA_JAVASCRIPT_START);
 
         if (startIndex < 0) {
             return Optional.empty();
         }
 
-        Integer endIndex = response.indexOf(DATA_JAVASCRIPT_END, startIndex);
+        int endIndex = response.indexOf(DATA_JAVASCRIPT_END, startIndex);
         return Optional.of(response.substring(startIndex, endIndex + DATA_JAVASCRIPT_END.length()));
     }
 

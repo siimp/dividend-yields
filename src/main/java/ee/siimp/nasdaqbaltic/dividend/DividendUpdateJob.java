@@ -10,14 +10,14 @@ import java.lang.invoke.MethodHandles;
 
 @Component
 @AllArgsConstructor
-public class DividendUpdateJob {
+class DividendUpdateJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private DividendService dividendService;
 
-    @Scheduled(cron = "0 0 6 * * *")
-    public void execute() {
+    @Scheduled(cron = "0 0 6 * * SAT")
+    void execute() {
         LOG.info("executing");
         dividendService.updateDividendInformation();
         LOG.info("done");

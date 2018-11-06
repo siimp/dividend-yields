@@ -25,7 +25,7 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
             "where stockPrice is null")
     List<DividendStockPriceDto> findDividendsWithoutStockPriceInfo();
 
-    @CacheEvict(cacheNames = "dividend-yield")
+    @CacheEvict(cacheNames = "dividend-yield", allEntries = true)
     @Override
     <S extends Dividend> S save(S entity);
 

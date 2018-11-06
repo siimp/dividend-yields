@@ -5,6 +5,7 @@ import ee.siimp.nasdaqbaltic.stock.Stock;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -33,5 +34,6 @@ public class StockPrice extends BaseEntity {
 
     @NotNull
     @Min(0)
+    @Column(precision = 7, scale = 4)
     private BigDecimal price;
 }

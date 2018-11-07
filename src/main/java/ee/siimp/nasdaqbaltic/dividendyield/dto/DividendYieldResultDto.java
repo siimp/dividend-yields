@@ -39,6 +39,12 @@ public class DividendYieldResultDto {
         yieldResult.setDividendYield(dto.getDividendYield());
         yieldResult.setExDividendDate(dto.getExDividendDate());
         yieldResult.setStockPriceAtExDividend(dto.getStockPriceAtExDividend());
+        yieldResult.setCurrentStockPrice(dto.getCurrentStockPrice());
+        if (dto.getYesterdayStockPrice() != null && dto.getCurrentStockPrice() != null) {
+            boolean currentStockPriceIsGreater = dto.getCurrentStockPrice().compareTo(dto.getYesterdayStockPrice()) > 0;
+            yieldResult.setYieldIncreased(!currentStockPriceIsGreater);
+        }
+
         yieldResult.setCapitalDecrease(dto.isCapitalDecrease());
         result.getDividends().add(yieldResult);
     }

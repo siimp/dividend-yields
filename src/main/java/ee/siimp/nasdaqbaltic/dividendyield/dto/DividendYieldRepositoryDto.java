@@ -17,6 +17,10 @@ public interface DividendYieldRepositoryDto {
 
     BigDecimal getStockPriceAtExDividend();
 
+    BigDecimal getCurrentStockPrice();
+
+    BigDecimal getYesterdayStockPrice();
+
     BigDecimal getDividendYield();
 
     boolean isCapitalDecrease();

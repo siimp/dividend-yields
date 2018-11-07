@@ -18,8 +18,12 @@ class StockPriceJob {
 
     @Scheduled(cron = "0 0 6 * * *")
     void execute() {
-        LOG.info("executing");
+        LOG.info("executing collectStockPricesAtExDividend");
         stockPriceService.collectStockPricesAtExDividend();
+        LOG.info("done");
+
+        LOG.info("executing collectCurrentStockPricesForFutureDividends");
+        stockPriceService.collectCurrentStockPricesForFutureDividends();
         LOG.info("done");
     }
 }

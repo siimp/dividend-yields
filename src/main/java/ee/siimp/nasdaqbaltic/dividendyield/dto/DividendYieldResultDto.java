@@ -15,6 +15,7 @@ public class DividendYieldResultDto {
     private String ticker;
     private String isin;
     private BigDecimal totalDividendYield = BigDecimal.ZERO;
+    private BigDecimal totalYesterdaysDividendYield = BigDecimal.ZERO;
     private List<DividendYieldDividendDto> dividends = new ArrayList<>();
 
     public static DividendYieldResultDto of(DividendYieldRepositoryDto dto) {
@@ -40,9 +41,9 @@ public class DividendYieldResultDto {
         yieldResult.setExDividendDate(dto.getExDividendDate());
         yieldResult.setStockPriceAtExDividend(dto.getStockPriceAtExDividend());
         yieldResult.setCurrentStockPrice(dto.getCurrentStockPrice());
-        if (dto.getYesterdayStockPrice() != null && dto.getCurrentStockPrice() != null) {
-            boolean currentStockPriceIsGreater = dto.getCurrentStockPrice().compareTo(dto.getYesterdayStockPrice()) > 0;
-            yieldResult.setYieldIncreased(!currentStockPriceIsGreater);
+        if (dto.getYesterdaysDividendYield() != null) {
+           result.setTotalYesterdaysDividendYield(result.getTotalYesterdaysDividendYield()
+                   .add(dto.getYesterdaysDividendYield()));
         }
 
         yieldResult.setCapitalDecrease(dto.isCapitalDecrease());

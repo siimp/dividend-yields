@@ -16,7 +16,6 @@ public class DividendYieldDividendDto {
     private BigDecimal dividendAmount;
     private BigDecimal stockPriceAtExDividend;
     private BigDecimal currentStockPrice;
-    private Boolean yieldIncreased;
     private BigDecimal dividendYield;
     private boolean capitalDecrease;
 }

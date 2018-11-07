@@ -26,8 +26,9 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
-            "stockPrice.price as currentStockPrice, yesterdayStockPrice.price as yesterdayStockPrice, " +
-            "((dividend.amount/stockPrice.price) * 100) as dividendYield " +
+            "stockPrice.price as currentStockPrice, " +
+            "((dividend.amount/stockPrice.price) * 100) as dividendYield, " +
+            "((dividend.amount/yesterdayStockPrice.price) * 100) as yesterdaysDividendYield " +
             "from #{#entityName} stock " +
             "inner join Dividend dividend ON dividend.stock = stock " +
             "inner join StockPrice stockPrice ON (stockPrice.stock = stock AND stockPrice.date = CURRENT_DATE) " +

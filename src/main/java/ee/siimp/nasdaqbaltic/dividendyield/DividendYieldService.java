@@ -3,7 +3,7 @@ package ee.siimp.nasdaqbaltic.dividendyield;
 import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldRepositoryDto;
 import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldResultDto;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,12 +16,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DividendYieldService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
     public List<DividendYieldResultDto> getByYear(Integer year) {
         LOG.info("getByYear {}", year);

@@ -1,7 +1,7 @@
 package ee.siimp.nasdaqbaltic.dividendyield;
 
 import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldResultDto;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
@@ -18,12 +18,12 @@ import java.util.List;
 @CacheConfig(cacheNames = "dividend-yield")
 @RestController
 @RequestMapping("/dividend-yield")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DividendYieldController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private DividendYieldService dividendYieldService;
+    private final DividendYieldService dividendYieldService;
 
     @Cacheable(key = "'getDividendYieldByYear-' + #year")
     @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

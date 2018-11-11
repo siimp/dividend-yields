@@ -1,7 +1,7 @@
 package ee.siimp.nasdaqbaltic.stockprice;
 
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Endpoint(id = "stock-price-job")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StockPriceJobActuatorEndpoint {
 
-    private StockPriceJob stockPriceJob;
+    private final StockPriceJob stockPriceJob;
 
     @ReadOperation
     public ResponseEntity executeJob() {

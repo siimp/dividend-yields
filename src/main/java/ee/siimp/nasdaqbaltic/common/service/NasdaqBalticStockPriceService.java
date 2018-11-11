@@ -4,13 +4,13 @@ import ee.siimp.nasdaqbaltic.common.csv.NasdaqBalticStockPriceCsv;
 import ee.siimp.nasdaqbaltic.common.utils.DateUtils;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stockprice.StockPrice;
+import ee.siimp.nasdaqbaltic.stockprice.StockPriceProperties;
 import ee.siimp.nasdaqbaltic.stockprice.StockPriceRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +30,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class NasdaqBalticStockPriceService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -39,17 +40,13 @@ public class NasdaqBalticStockPriceService {
     private static final String URI_QUERY_PARAM_DATE_END = "end";
     private static final int MAX_DAYS_TO_TRY_ON_VALUE_ABSENCE = 2;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private EntityManager em;
+    private final EntityManager em;
 
-    @Autowired
-    private StockPriceRepository stockPriceRepository;
+    private final StockPriceRepository stockPriceRepository;
 
-    @Value("${nasdaqbaltic.stock-price-endpoint}")
-    private String nasdaqBalticStockPriceEndpoint;
+    private final StockPriceProperties stockPriceProperties;
 
     public void loadStockPrice(Long stockId, String stockIsin, LocalDate date) {
 
@@ -101,7 +98,7 @@ public class NasdaqBalticStockPriceService {
     }
 
     private URI getEndpoint(String stockIsin, LocalDate date) {
-        return UriComponentsBuilder.fromHttpUrl(nasdaqBalticStockPriceEndpoint)
+        return UriComponentsBuilder.fromHttpUrl(stockPriceProperties.getEndpoint())
                 .queryParam(URI_QUERY_PARAM_INSTRUMENT, stockIsin)
                 .queryParam(URI_QUERY_PARAM_DATE_START, DateUtils.formatEstonianDate(date))
                 .queryParam(URI_QUERY_PARAM_DATE_END, DateUtils.formatEstonianDate(date))

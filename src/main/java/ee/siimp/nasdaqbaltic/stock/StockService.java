@@ -1,7 +1,7 @@
 package ee.siimp.nasdaqbaltic.stock;
 
 import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticStockService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StockService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private Validator validator;
+    private final Validator validator;
 
-    private StockRepository stockRepository;
+    private final StockRepository stockRepository;
 
-    private NasdaqBalticStockService nasdaqBalticStockService;
+    private final NasdaqBalticStockService nasdaqBalticStockService;
 
     public void updateStockInformation() {
         LOG.info("updating stock infromation");

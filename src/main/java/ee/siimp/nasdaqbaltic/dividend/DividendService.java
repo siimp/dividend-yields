@@ -1,7 +1,7 @@
 package ee.siimp.nasdaqbaltic.dividend;
 
 import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticDividendService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,16 +12,16 @@ import java.time.LocalDate;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DividendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final int INFORMATION_PERIOD_IN_YEARS = 4;
 
-    private NasdaqBalticDividendService nasdaqBalticDividendService;
+    private final NasdaqBalticDividendService nasdaqBalticDividendService;
 
-    private DividendRepository dividendRepository;
+    private final DividendRepository dividendRepository;
 
     public void updateDividendInformation() {
         int toYear = LocalDate.now().getYear() + 1;

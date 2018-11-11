@@ -2,14 +2,14 @@ package ee.siimp.nasdaqbaltic.common.service;
 
 import ee.siimp.nasdaqbaltic.common.utils.DateUtils;
 import ee.siimp.nasdaqbaltic.dividend.Dividend;
+import ee.siimp.nasdaqbaltic.dividend.DividendProperties;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class NasdaqBalticDividendService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -57,23 +58,19 @@ public class NasdaqBalticDividendService {
 
     private static final String DATA_TYPE_CAPITAL_DECREASE = "capital-decrease";
 
-    @Value("${nasdaqbaltic.dividend-endpoint}")
-    private String nasdaqBalticDividendEndpoint;
 
-    @Autowired
-    private StockRepository stockRepository;
+    private final DividendProperties dividendProperties;
 
-    @Autowired
-    private DividendRepository dividendRepository;
+    private final StockRepository stockRepository;
 
-    @Autowired
-    private EntityManager em;
+    private final DividendRepository dividendRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final EntityManager em;
+
+    private final RestTemplate restTemplate;
 
     public void loadYearDividends(int year) throws ScriptException {
-        URI endpoint = UriComponentsBuilder.fromHttpUrl(nasdaqBalticDividendEndpoint)
+        URI endpoint = UriComponentsBuilder.fromHttpUrl(dividendProperties.getEndpoint())
                 .queryParam(URI_QUERY_PARAM_YEAR, year).build().toUri();
 
         LOG.info("loading year {} dividends from {}", year, endpoint);
@@ -89,7 +86,7 @@ public class NasdaqBalticDividendService {
             if (javaScriptDataValueOptional.isPresent()) {
                 getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency, isCapitalDecrease) ->
                         stockRepository.findIdByTicker(ticker).ifPresent(stockId ->
-                            saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease, ticker)
+                                saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease, ticker)
                         )
                 );
             }

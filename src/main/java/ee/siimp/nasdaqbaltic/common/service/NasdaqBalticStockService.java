@@ -2,13 +2,12 @@ package ee.siimp.nasdaqbaltic.common.service;
 
 import ee.siimp.nasdaqbaltic.common.csv.NasdaqBalticEquityListCsv;
 import ee.siimp.nasdaqbaltic.stock.Stock;
+import ee.siimp.nasdaqbaltic.stock.StockProperties;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,18 +22,15 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class NasdaqBalticStockService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Value("${nasdaqbaltic.stock-endpoint}")
-    private String nasdaqBalticStockEndpoint;
+    private final StockProperties stockProperties;
 
-    @Value("${nasdaqbaltic.equity-list:#{null}}")
-    private Resource nasdaqBalticEquityListCsvFile;
 
     public List<Stock> loadAllStocks() {
 
@@ -64,15 +60,15 @@ public class NasdaqBalticStockService {
     }
 
     private CSVParser getCsvRecords() throws IOException {
-        if (nasdaqBalticEquityListCsvFile != null) {
-            LOG.debug("loading local csv file {}", nasdaqBalticEquityListCsvFile.getFilename());
+        if (stockProperties.getStaticList() != null) {
+            LOG.debug("loading local csv file {}", stockProperties.getStaticList().getFilename());
             return new CSVParser(
-                    new BufferedReader(new InputStreamReader(nasdaqBalticEquityListCsvFile.getInputStream(), StandardCharsets.UTF_16)),
+                    new BufferedReader(new InputStreamReader(stockProperties.getStaticList().getInputStream(), StandardCharsets.UTF_16)),
                     NasdaqBalticEquityListCsv.FORMAT);
         } else {
-            LOG.debug("loading remote csv file from {}", nasdaqBalticStockEndpoint);
+            LOG.debug("loading remote csv file from {}", stockProperties.getEndpoint());
 
-            String response = restTemplate.getForObject(nasdaqBalticStockEndpoint, String.class);
+            String response = restTemplate.getForObject(stockProperties.getEndpoint(), String.class);
             return new CSVParser(new StringReader(response), NasdaqBalticEquityListCsv.FORMAT);
         }
 

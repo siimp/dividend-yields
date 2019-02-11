@@ -22,11 +22,19 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
             "from #{#entityName} dividend " +
             "inner join dividend.stock stock " +
             "left join StockPrice stockPrice on (stockPrice.stock = dividend.stock and stockPrice.date = dividend.exDividendDate) " +
-            "where stockPrice is null")
-    List<DividendStockPriceDto> findDividendsWithoutStockPriceInfo();
+            "where stockPrice is null AND dividend.exDividendDate < CURRENT_DATE")
+    List<DividendStockPriceDto> findPastDividendsWithoutStockPriceInfo();
+
+    @Query("select stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
+            "from #{#entityName} dividend " +
+            "inner join dividend.stock stock " +
+            "left join StockPrice stockPrice on (stockPrice.stock = dividend.stock and stockPrice.date = CURRENT_DATE) " +
+            "where stockPrice is null AND dividend.exDividendDate >= CURRENT_DATE")
+    List<DividendStockPriceDto> findFutureDividendsWithoutStockPriceInfo();
 
     @CacheEvict(cacheNames = "dividend-yield", allEntries = true)
     @Override
     <S extends Dividend> S save(S entity);
+
 
 }

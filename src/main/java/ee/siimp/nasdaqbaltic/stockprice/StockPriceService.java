@@ -24,13 +24,10 @@ public class StockPriceService {
     private final NasdaqBalticStockPriceService nasdaqBalticStockPriceService;
 
     void collectStockPricesAtExDividend() {
-        LOG.info("collecting stock prices without dividend");
+        LOG.info("collecting stock prices for past dividends");
         List<DividendStockPriceDto> pastDividendsWithoutStockPriceInfo =
-                dividendRepository.findDividendsWithoutStockPriceInfo()
-                        .stream()
-                        .filter(it -> LocalDate.now().isAfter(it.getExDividendDate()))
-                        .collect(Collectors.toList());
-        LOG.info("{} dividends are without stock price info", pastDividendsWithoutStockPriceInfo.size());
+                dividendRepository.findPastDividendsWithoutStockPriceInfo();
+        LOG.info("{} past dividends are without stock price info", pastDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : pastDividendsWithoutStockPriceInfo) {
             nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
 
@@ -42,10 +39,7 @@ public class StockPriceService {
         LocalDate now = LocalDate.now();
         LOG.info("collecting todays stock prices for future dividends");
         List<DividendStockPriceDto> futureDividendsWithoutStockPriceInfo =
-                dividendRepository.findDividendsWithoutStockPriceInfo()
-                        .stream()
-                        .filter(it -> now.isBefore(it.getExDividendDate()) || now.isEqual(it.getExDividendDate()))
-                        .collect(Collectors.toList());
+                dividendRepository.findFutureDividendsWithoutStockPriceInfo();
         LOG.info("{} future dividends are without todays stock price info", futureDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : futureDividendsWithoutStockPriceInfo) {
             nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), now);

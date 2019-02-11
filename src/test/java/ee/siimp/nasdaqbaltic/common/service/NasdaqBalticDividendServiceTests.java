@@ -1,5 +1,6 @@
 package ee.siimp.nasdaqbaltic.common.service;
 
+import ee.siimp.nasdaqbaltic.IntegrationTest;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
@@ -27,10 +28,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@RunWith(SpringRunner.class)
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-public class NasdaqBalticDividendServiceTests {
+
+public class NasdaqBalticDividendServiceTests extends IntegrationTest {
 
     private static final String TEST_STOCK_TICKER = "SFG1T";
 

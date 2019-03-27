@@ -27,6 +27,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -113,11 +114,20 @@ public class NasdaqBalticStockPriceService {
 
     private void saveNewStockPrice(Long stockId, LocalDate date, BigDecimal price) {
         LOG.info("saving stock price {} {} for stock id = {}", price, date, stockId);
-        StockPrice stockPrice = new StockPrice();
-        stockPrice.setDate(date);
-        stockPrice.setPrice(price);
-        stockPrice.setStock(em.getReference(Stock.class, stockId));
-        stockPriceRepository.save(stockPrice);
+        Optional<StockPrice> stockPriceOptional = stockPriceRepository.findByStockIdAndDate(stockId, date);
+
+        if (stockPriceOptional.isPresent()) {
+            stockPriceOptional.get().setPrice(price);
+            stockPriceRepository.save(stockPriceOptional.get());
+        } else {
+            StockPrice stockPrice = new StockPrice();
+            stockPrice.setDate(date);
+            stockPrice.setPrice(price);
+            stockPrice.setStock(em.getReference(Stock.class, stockId));
+            stockPriceRepository.save(stockPrice);
+        }
+
+
     }
 
 }

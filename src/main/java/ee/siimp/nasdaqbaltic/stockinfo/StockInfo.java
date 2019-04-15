@@ -14,7 +14,7 @@ import java.math.BigInteger;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"stock_id", "numberOfSecurities"}, name = "uc_stock_info_stock_id_number_of_securities"))
 @Getter
 @Setter
-public class StockInfo extends BaseEntity {
+class StockInfo extends BaseEntity {
 
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -23,5 +23,6 @@ public class StockInfo extends BaseEntity {
 
     @NotNull
     @Min(0)
+    @Column(precision = 21)
     private BigInteger numberOfSecurities;
 }

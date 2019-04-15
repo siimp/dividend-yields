@@ -64,9 +64,9 @@ public class NasdaqBalticDividendScraperTests extends IntegrationTest {
         nasdaqBalticDividendScraper.loadYearDividends(2018);
 
         assertThat(dividendRepository.count()).isEqualTo(2);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 01, 25)).isCapitalDecrease())
+        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 1, 25)).isCapitalDecrease())
                 .isEqualTo(false);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 07, 16)).isCapitalDecrease())
+        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 7, 16)).isCapitalDecrease())
                 .isEqualTo(true);
     }
 }

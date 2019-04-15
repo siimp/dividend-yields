@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NasdaqBalticDividendScraper {
+class NasdaqBalticDividendScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -66,7 +66,7 @@ public class NasdaqBalticDividendScraper {
 
     private final RestTemplate restTemplate;
 
-    public void loadYearDividends(int year) throws ScriptException {
+    void loadYearDividends(int year) throws ScriptException {
         URI endpoint = UriComponentsBuilder.fromHttpUrl(dividendProperties.getEndpoint())
                 .queryParam(URI_QUERY_PARAM_YEAR, year).build().toUri();
 

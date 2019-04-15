@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NasdaqBalticEquityListScraper {
+class NasdaqBalticEquityListScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -29,7 +29,7 @@ public class NasdaqBalticEquityListScraper {
     private final StockProperties stockProperties;
 
 
-    public List<Stock> loadAllStocks() {
+    List<Stock> loadAllStocks() {
 
         List<Stock> result = new ArrayList<>();
         try {

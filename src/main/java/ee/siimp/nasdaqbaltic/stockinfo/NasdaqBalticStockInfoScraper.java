@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class NasdaqBalticStockInfoScraper {
+class NasdaqBalticStockInfoScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -30,23 +30,27 @@ public class NasdaqBalticStockInfoScraper {
 
     private final EntityManager em;
 
-    public void loadStockInfo(Long stockId, String stockIsin) {
+    void loadStockInfo(Long stockId, String stockIsin) {
         URI endpoint = getEndpoint(stockIsin);
         LOG.info("loading price for {} from {}", stockIsin, endpoint);
         String response = restTemplate.getForObject(endpoint, String.class);
-        BigInteger numberOfSecurities = getNumberOfSecurities(response);
 
-        if (numberOfSecurities != null) {
-            saveStockInfo(stockId, numberOfSecurities);
+
+        try {
+            saveStockInfo(stockId, getNumberOfSecurities(response));
+        } catch (Exception e) {
+            LOG.info("could not get stock info for {} with stock id = {}",
+                    stockIsin, stockId);
+            LOG.error(e.getMessage());
         }
     }
 
     private void saveStockInfo(Long stockId, BigInteger numberOfSecurities) {
         LOG.info("saving stock info with number of securities {} for stock id = {}", numberOfSecurities, stockId);
-        Optional<StockInfo> stockInfoOptional =
-                stockInfoRepository.findByStockIdAndNumberOfSecurities(stockId, numberOfSecurities);
+        boolean stockInfoExists =
+                stockInfoRepository.existsByStockIdAndNumberOfSecurities(stockId, numberOfSecurities);
 
-        if (stockInfoOptional.isPresent()) {
+        if (stockInfoExists) {
             LOG.info("this stock info is already saved");
         } else {
             StockInfo stockInfo = new StockInfo();
@@ -74,12 +78,7 @@ public class NasdaqBalticStockInfoScraper {
                 valueEndIndex).replaceAll(" ", "");
 
         LOG.info("read number of securities value {}", value);
-        try {
-            return new BigInteger(value);
-        } catch (NumberFormatException e) {
-            LOG.error(e.getMessage(), e);
-        }
 
-        return null;
+        return new BigInteger(value);
     }
 }

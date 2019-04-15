@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NasdaqBalticStockPriceScraper {
+class NasdaqBalticStockPriceScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -45,7 +45,7 @@ public class NasdaqBalticStockPriceScraper {
 
     private final StockPriceProperties stockPriceProperties;
 
-    public void loadStockPrice(Long stockId, String stockIsin, LocalDate date) {
+    void loadStockPrice(Long stockId, String stockIsin, LocalDate date) {
 
         if (LocalDate.now().isBefore(date)) {
             LOG.warn("skipping future date {} for stock id = {}", date, stockId);

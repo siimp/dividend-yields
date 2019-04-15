@@ -6,5 +6,8 @@ import java.math.BigInteger;
 import java.util.Optional;
 
 public interface StockInfoRepository extends JpaRepository<StockInfo, Long> {
+
     Optional<StockInfo> findByStockIdAndNumberOfSecurities(Long stockId, BigInteger numberOfSecurities);
+
+    boolean existsByStockIdAndNumberOfSecurities(Long stockId, BigInteger numberOfSecurities);
 }

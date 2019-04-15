@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @ConfigurationProperties(prefix = "stock-info")
 @Getter
 @Setter
-public class StockInfoProperties {
+class StockInfoProperties {
 
     @NotBlank
     private String updateJobCron;

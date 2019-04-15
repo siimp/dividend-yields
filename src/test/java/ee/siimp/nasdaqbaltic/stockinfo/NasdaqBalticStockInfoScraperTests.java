@@ -55,7 +55,7 @@ public class NasdaqBalticStockInfoScraperTests extends IntegrationTest {
     }
 
     @Test
-    public void savesDividendSuccessfully() throws ScriptException, IOException {
+    public void savesDividendSuccessfully() throws  IOException {
         given(restTemplate.getForObject(any(), eq(String.class)))
                 .willReturn(Files.lines(stockInfoAprangaHtml.getFile().toPath())
                         .collect(Collectors.joining()));

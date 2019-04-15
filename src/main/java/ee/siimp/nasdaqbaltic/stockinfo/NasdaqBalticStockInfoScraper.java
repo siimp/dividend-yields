@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import java.lang.invoke.MethodHandles;
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -1,6 +1,5 @@
 package ee.siimp.nasdaqbaltic.stock;
 
-import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticStockService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,7 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    private final NasdaqBalticStockService nasdaqBalticStockService;
+    private final NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
 
     public void updateStockInformation() {
         LOG.info("updating stock infromation");
@@ -34,7 +33,7 @@ public class StockService {
                 .map(Stock::getTicker)
                 .collect(Collectors.toList());
 
-        List<Stock> newStocks = nasdaqBalticStockService.loadAllStocks().stream()
+        List<Stock> newStocks = nasdaqBalticEquityListScraper.loadAllStocks().stream()
                 .filter(it -> !existingStockNames.contains(it.getTicker()))
                 .collect(Collectors.toList());
 

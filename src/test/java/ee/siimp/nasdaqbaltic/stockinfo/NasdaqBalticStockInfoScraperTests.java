@@ -1,26 +1,21 @@
-package ee.siimp.nasdaqbaltic.common.service;
+package ee.siimp.nasdaqbaltic.stockinfo;
 
 import ee.siimp.nasdaqbaltic.IntegrationTest;
-import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
-import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -28,25 +23,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
+public class NasdaqBalticStockInfoScraperTests extends IntegrationTest {
 
-public class NasdaqBalticDividendServiceTests extends IntegrationTest {
-
-    private static final String TEST_STOCK_TICKER = "SFG1T";
+    private static final String TEST_STOCK_TICKER = "APG1L";
 
     @MockBean
     private RestTemplate restTemplate;
 
     @Autowired
-    private NasdaqBalticDividendService nasdaqBalticDividendService;
+    private NasdaqBalticStockInfoScraper nasdaqBalticStockInfoScraper;
 
     @Autowired
     private StockRepository stockRepository;
 
     @Autowired
-    private DividendRepository dividendRepository;
+    private StockInfoRepository stockInfoRepository;
 
-    @Value("dividendsAndCapitalDecrease2018.html")
-    private Resource dividendsAndCapitalDecrease2018Html;
+    @Value("stockInfoApranga.html")
+    private Resource stockInfoAprangaHtml;
 
     @Before
     public void setUp() {
@@ -63,14 +57,22 @@ public class NasdaqBalticDividendServiceTests extends IntegrationTest {
     @Test
     public void savesDividendSuccessfully() throws ScriptException, IOException {
         given(restTemplate.getForObject(any(), eq(String.class)))
-                .willReturn(Files.lines(dividendsAndCapitalDecrease2018Html.getFile().toPath())
+                .willReturn(Files.lines(stockInfoAprangaHtml.getFile().toPath())
                         .collect(Collectors.joining()));
-        nasdaqBalticDividendService.loadYearDividends(2018);
 
-        assertThat(dividendRepository.count()).isEqualTo(2);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 01, 25)).isCapitalDecrease())
-                .isEqualTo(false);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 07, 16)).isCapitalDecrease())
-                .isEqualTo(true);
+        Optional<Long> stockOptional = stockRepository.findIdByTicker(TEST_STOCK_TICKER);
+
+        BigInteger expectedNumberOfSecuritiesValue = new BigInteger("55291960");
+        Optional<StockInfo> stockInfoOptional = stockInfoRepository.
+                findByStockIdAndNumberOfSecurities(stockOptional.get(), expectedNumberOfSecuritiesValue);
+        assertThat(stockInfoOptional.isPresent()).isFalse();
+
+        nasdaqBalticStockInfoScraper.loadStockInfo(stockOptional.get(), TEST_STOCK_TICKER);
+
+        stockInfoOptional = stockInfoRepository.
+                findByStockIdAndNumberOfSecurities(stockOptional.get(), expectedNumberOfSecuritiesValue);
+        assertThat(stockInfoOptional.isPresent()).isTrue();
+
+
     }
 }

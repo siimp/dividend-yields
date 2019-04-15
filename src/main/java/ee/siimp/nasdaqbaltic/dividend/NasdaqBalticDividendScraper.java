@@ -1,9 +1,6 @@
-package ee.siimp.nasdaqbaltic.common.service;
+package ee.siimp.nasdaqbaltic.dividend;
 
 import ee.siimp.nasdaqbaltic.common.utils.DateUtils;
-import ee.siimp.nasdaqbaltic.dividend.Dividend;
-import ee.siimp.nasdaqbaltic.dividend.DividendProperties;
-import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -32,7 +29,7 @@ import java.util.stream.Stream;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NasdaqBalticDividendService {
+public class NasdaqBalticDividendScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

@@ -1,8 +1,5 @@
-package ee.siimp.nasdaqbaltic.common.service;
+package ee.siimp.nasdaqbaltic.stock;
 
-import ee.siimp.nasdaqbaltic.common.csv.NasdaqBalticEquityListCsv;
-import ee.siimp.nasdaqbaltic.stock.Stock;
-import ee.siimp.nasdaqbaltic.stock.StockProperties;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -23,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NasdaqBalticStockService {
+public class NasdaqBalticEquityListScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

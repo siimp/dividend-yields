@@ -1,4 +1,4 @@
-package ee.siimp.nasdaqbaltic.stockprice;
+package ee.siimp.nasdaqbaltic.stockinfo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,15 +10,14 @@ import javax.validation.constraints.NotBlank;
 
 @Component
 @Validated
-@ConfigurationProperties(prefix = "stock-price")
+@ConfigurationProperties(prefix = "stock-info")
 @Getter
 @Setter
-public class StockPriceProperties {
+public class StockInfoProperties {
 
     @NotBlank
     private String updateJobCron;
 
     @NotBlank
     private String endpoint;
-
 }

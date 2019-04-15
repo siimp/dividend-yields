@@ -1,6 +1,5 @@
 package ee.siimp.nasdaqbaltic.dividend;
 
-import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticDividendService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ public class DividendService {
 
     private static final int INFORMATION_PERIOD_IN_YEARS = 4;
 
-    private final NasdaqBalticDividendService nasdaqBalticDividendService;
+    private final NasdaqBalticDividendScraper nasdaqBalticDividendScraper;
 
     private final DividendRepository dividendRepository;
 
@@ -31,7 +30,7 @@ public class DividendService {
         for (int year = fromYear; year <= toYear; year++) {
             try {
                 if (isUpdateNeededForYear(year)) {
-                    nasdaqBalticDividendService.loadYearDividends(year);
+                    nasdaqBalticDividendScraper.loadYearDividends(year);
                 }
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);

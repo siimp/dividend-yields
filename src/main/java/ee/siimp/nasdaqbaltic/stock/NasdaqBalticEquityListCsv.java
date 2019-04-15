@@ -1,4 +1,4 @@
-package ee.siimp.nasdaqbaltic.common.csv;
+package ee.siimp.nasdaqbaltic.stock;
 
 import org.apache.commons.csv.CSVFormat;
 

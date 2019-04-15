@@ -1,11 +1,7 @@
-package ee.siimp.nasdaqbaltic.common.service;
+package ee.siimp.nasdaqbaltic.stockprice;
 
-import ee.siimp.nasdaqbaltic.common.csv.NasdaqBalticStockPriceCsv;
 import ee.siimp.nasdaqbaltic.common.utils.DateUtils;
 import ee.siimp.nasdaqbaltic.stock.Stock;
-import ee.siimp.nasdaqbaltic.stockprice.StockPrice;
-import ee.siimp.nasdaqbaltic.stockprice.StockPriceProperties;
-import ee.siimp.nasdaqbaltic.stockprice.StockPriceRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -32,7 +28,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NasdaqBalticStockPriceService {
+public class NasdaqBalticStockPriceScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

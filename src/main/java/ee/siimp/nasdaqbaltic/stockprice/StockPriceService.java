@@ -1,6 +1,5 @@
 package ee.siimp.nasdaqbaltic.stockprice;
 
-import ee.siimp.nasdaqbaltic.common.service.NasdaqBalticStockPriceService;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.dividend.dto.DividendStockPriceDto;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class StockPriceService {
 
     private final DividendRepository dividendRepository;
 
-    private final NasdaqBalticStockPriceService nasdaqBalticStockPriceService;
+    private final NasdaqBalticStockPriceScraper nasdaqBalticStockPriceScraper;
 
     void collectStockPricesAtExDividend() {
         LOG.info("collecting stock prices for past dividends");
@@ -29,7 +27,7 @@ public class StockPriceService {
                 dividendRepository.findPastDividendsWithoutStockPriceInfo();
         LOG.info("{} past dividends are without stock price info", pastDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : pastDividendsWithoutStockPriceInfo) {
-            nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
+            nasdaqBalticStockPriceScraper.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
 
             sleep();
         }
@@ -42,7 +40,7 @@ public class StockPriceService {
                 dividendRepository.findFutureDividendsWithoutStockPriceInfo();
         LOG.info("{} future dividends are without todays stock price info", futureDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : futureDividendsWithoutStockPriceInfo) {
-            nasdaqBalticStockPriceService.loadStockPrice(dto.getStockId(), dto.getStockIsin(), now);
+            nasdaqBalticStockPriceScraper.loadStockPrice(dto.getStockId(), dto.getStockIsin(), now);
             sleep();
         }
     }

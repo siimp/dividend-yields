@@ -1,6 +1,7 @@
 package ee.siimp.nasdaqbaltic.stockinfo;
 
 import ee.siimp.nasdaqbaltic.stock.Stock;
+import ee.siimp.nasdaqbaltic.stockinfo.dto.StockAndIsinDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,48 +22,64 @@ class NasdaqBalticStockInfoScraper {
 
     private static final String URI_QUERY_PARAM_INSTRUMENT = "instrument";
 
+    private static final String URI_QUERY_PARAM_LIST = "list";
+
     private final StockInfoRepository stockInfoRepository;
 
     private final StockInfoProperties stockInfoProperties;
 
     private final RestTemplate restTemplate;
 
-    private final EntityManager em;
+    private final EntityManager entityManager;
 
-    void loadStockInfo(Long stockId, String stockIsin) {
-        URI endpoint = getEndpoint(stockIsin);
-        LOG.info("loading price for {} from {}", stockIsin, endpoint);
+    void loadStockInfo(StockAndIsinDto stockAndIsinDto) {
+        boolean stockInfoExists = stockInfoRepository.existsByStockId(stockAndIsinDto.getId());
+
+        if (stockInfoExists) {
+            LOG.info("this stock info is already saved");
+            return;
+        }
+
+
+        URI endpoint = getEndpoint(stockAndIsinDto.getIsin(), stockAndIsinDto.getSegment());
+        LOG.info("loading price for {} from {}", stockAndIsinDto.getIsin(), endpoint);
         String response = restTemplate.getForObject(endpoint, String.class);
 
 
         try {
-            saveStockInfo(stockId, getNumberOfSecurities(response));
+            saveStockInfo(stockAndIsinDto.getId(), getNumberOfSecurities(response));
         } catch (Exception e) {
-            LOG.info("could not get stock info for {} with stock id = {}",
-                    stockIsin, stockId);
+            LOG.info("could not get stock info for {}", stockAndIsinDto.getIsin());
             LOG.error(e.getMessage());
         }
     }
 
     private void saveStockInfo(Long stockId, BigInteger numberOfSecurities) {
-        LOG.info("saving stock info with number of securities {} for stock id = {}", numberOfSecurities, stockId);
-        boolean stockInfoExists =
-                stockInfoRepository.existsByStockIdAndNumberOfSecurities(stockId, numberOfSecurities);
+        LOG.info("saving stock info with number of securities {} for stock = {}", numberOfSecurities, stockId);
 
-        if (stockInfoExists) {
-            LOG.info("this stock info is already saved");
-        } else {
-            StockInfo stockInfo = new StockInfo();
-            stockInfo.setStock(em.getReference(Stock.class, stockId));
-            stockInfo.setNumberOfSecurities(numberOfSecurities);
-            stockInfoRepository.save(stockInfo);
-        }
+        StockInfo stockInfo = new StockInfo();
+        stockInfo.setStock(entityManager.getReference(Stock.class, stockId));
+        stockInfo.setNumberOfSecurities(numberOfSecurities);
+        stockInfoRepository.save(stockInfo);
     }
 
-    private URI getEndpoint(String stockIsin) {
+    private URI getEndpoint(String stockIsin, String segment) {
         return UriComponentsBuilder.fromHttpUrl(stockInfoProperties.getEndpoint())
                 .queryParam(URI_QUERY_PARAM_INSTRUMENT, stockIsin)
+                .queryParam(URI_QUERY_PARAM_LIST, getSegmentNumberFromName(segment))
                 .build().toUri();
+    }
+
+    private int getSegmentNumberFromName(String segment) {
+        if (Stock.SEGMENT_MAIN_LIST.equals(segment)) {
+            return 2;
+        } else if (Stock.SEGMENT_SECONDARY_LIST.equals(segment)) {
+            return 3;
+        } else if (Stock.SEGMENT_FIRST_NORTH_LIST.equals(segment)) {
+            return 6;
+        } else {
+            return 1;
+        }
     }
 
     private BigInteger getNumberOfSecurities(String response) {

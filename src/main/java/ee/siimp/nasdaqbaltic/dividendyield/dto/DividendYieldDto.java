@@ -3,7 +3,7 @@ package ee.siimp.nasdaqbaltic.dividendyield.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public interface DividendYieldRepositoryDto {
+public interface DividendYieldDto {
 
     String getName();
 
@@ -15,6 +15,8 @@ public interface DividendYieldRepositoryDto {
 
     BigDecimal getDividendAmount();
 
+    BigDecimal getDividendCost();
+
     BigDecimal getStockPriceAtExDividend();
 
     BigDecimal getCurrentStockPrice();
@@ -24,6 +26,5 @@ public interface DividendYieldRepositoryDto {
     BigDecimal getYesterdaysDividendYield();
 
     boolean isCapitalDecrease();
-
 
 }

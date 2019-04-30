@@ -1,6 +1,6 @@
 package ee.siimp.nasdaqbaltic.dividendyield;
 
-import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldRepositoryDto;
+import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldDto;
 import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldResultDto;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class DividendYieldService {
 
     public List<DividendYieldResultDto> getByYear(Integer year) {
         LOG.info("getByYear {}", year);
-        List<DividendYieldRepositoryDto> searchResult = stockRepository.findAllWithDividendYieldsByYear(year);
+        List<DividendYieldDto> searchResult = stockRepository.findAllWithDividendYieldsByYear(year);
         List<DividendYieldResultDto> result = getDtoResult(searchResult);
         LOG.info("result size is {}", result.size());
         return result;
@@ -33,15 +33,15 @@ public class DividendYieldService {
 
     public List<DividendYieldResultDto> getFutureYields() {
         LOG.info("getting this year current possible divided yields");
-        List<DividendYieldRepositoryDto> searchResult = stockRepository.findAllWithFutureDividendYields();
+        List<DividendYieldDto> searchResult = stockRepository.findAllWithFutureDividendYields();
         List<DividendYieldResultDto> result = getDtoResult(searchResult);
         LOG.info("result size is {}", result.size());
         return result;
     }
 
-    private List<DividendYieldResultDto> getDtoResult(List<DividendYieldRepositoryDto> searchResult) {
+    private List<DividendYieldResultDto> getDtoResult(List<DividendYieldDto> searchResult) {
         Map<String, DividendYieldResultDto> result = new HashMap<>();
-        for (DividendYieldRepositoryDto dto : searchResult) {
+        for (DividendYieldDto dto : searchResult) {
             if (result.containsKey(dto.getTicker())) {
                 result.get(dto.getTicker()).add(dto);
             } else {

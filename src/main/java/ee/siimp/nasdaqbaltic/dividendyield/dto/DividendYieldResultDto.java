@@ -18,7 +18,7 @@ public class DividendYieldResultDto {
     private BigDecimal totalYesterdaysDividendYield = BigDecimal.ZERO;
     private List<DividendYieldDividendDto> dividends = new ArrayList<>();
 
-    public static DividendYieldResultDto of(DividendYieldRepositoryDto dto) {
+    public static DividendYieldResultDto of(DividendYieldDto dto) {
         DividendYieldResultDto result = new DividendYieldResultDto();
         result.setName(dto.getName());
         result.setTicker(dto.getTicker());
@@ -28,11 +28,11 @@ public class DividendYieldResultDto {
         return result;
     }
 
-    public void add(DividendYieldRepositoryDto dto) {
+    public void add(DividendYieldDto dto) {
         addDividend(dto, this);
     }
 
-    private static void addDividend(DividendYieldRepositoryDto dto, DividendYieldResultDto result) {
+    private static void addDividend(DividendYieldDto dto, DividendYieldResultDto result) {
         result.setTotalDividendYield(result.getTotalDividendYield().add(dto.getDividendYield()));
 
         DividendYieldDividendDto yieldResult = new DividendYieldDividendDto();
@@ -41,6 +41,7 @@ public class DividendYieldResultDto {
         yieldResult.setExDividendDate(dto.getExDividendDate());
         yieldResult.setStockPriceAtExDividend(dto.getStockPriceAtExDividend());
         yieldResult.setCurrentStockPrice(dto.getCurrentStockPrice());
+        yieldResult.setDividendCost(dto.getDividendCost());
         if (dto.getYesterdaysDividendYield() != null) {
            result.setTotalYesterdaysDividendYield(result.getTotalYesterdaysDividendYield()
                    .add(dto.getYesterdaysDividendYield()));

@@ -1,6 +1,6 @@
 package ee.siimp.nasdaqbaltic.stock;
 
-import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldRepositoryDto;
+import ee.siimp.nasdaqbaltic.dividendyield.dto.DividendYieldDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,13 +18,15 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
             "stockPrice.price as stockPriceAtExDividend, " +
-            "((dividend.amount/stockPrice.price) * 100) as dividendYield " +
+            "((dividend.amount/stockPrice.price) * 100) as dividendYield, " +
+            "(dividend.amount * coalesce(stockInfo.numberOfSecurities, null)) as dividendCost " +
             "from #{#entityName} stock " +
             "inner join Dividend dividend ON dividend.stock = stock " +
             "inner join StockPrice stockPrice ON (stockPrice.stock = stock AND stockPrice.date = dividend.exDividendDate) " +
+            "left join StockInfo stockInfo ON  (stockInfo.stock = stock) " +
             "where YEAR(dividend.exDividendDate) = ?1 " +
             "order by dividendYield desc")
-    List<DividendYieldRepositoryDto> findAllWithDividendYieldsByYear(Integer year);
+    List<DividendYieldDto> findAllWithDividendYieldsByYear(Integer year);
 
 
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
@@ -39,5 +41,5 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
             "where YEAR(dividend.exDividendDate) = YEAR(CURRENT_DATE) and " +
             "dividend.exDividendDate > CURRENT_DATE " +
             "order by dividendYield desc")
-    List<DividendYieldRepositoryDto> findAllWithFutureDividendYields();
+    List<DividendYieldDto> findAllWithFutureDividendYields();
 }

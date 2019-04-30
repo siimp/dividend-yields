@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-@CacheConfig(cacheNames = "dividend-yield")
+@CacheConfig(cacheNames = DividendYieldController.CACHE_NAME)
 @RestController
 @RequestMapping("/dividend-yield")
 @RequiredArgsConstructor
 public class DividendYieldController {
+
+    public static final String CACHE_NAME = "dividend-yield";
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

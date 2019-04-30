@@ -10,15 +10,24 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
+/**
+ * Väärtpaberite splittimine
+ * <p>
+ * on aktsiate nimiväärtuse vähendamine aktsiakapitali suuruse muutmiseta,
+ * muutub aktsiate arv. Uue nimiväärtusega aktsiatele antakse uus ISIN kood.
+ * Aktsiate splittimist võivad kasutada äriühingud,
+ * kelle väärtpaberid on suure nimiväärtusega ja seetõttu vähelikviidsed,
+ * kuid kelle väärtpaberite vastu oodatakse suurema huvi tekkimist.
+ * Splittimine lihtsustab muudatuste tegemist omanike struktuuris ka börsil mittenoteeritud äriühingutel.
+ */
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"stock_id", "numberOfSecurities"}, name = "uc_stock_info_stock_id_number_of_securities"))
 @Getter
 @Setter
 class StockInfo extends BaseEntity {
 
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, updatable = false)
+    @JoinColumn(nullable = false, updatable = false, unique = true)
     private Stock stock;
 
     @NotNull

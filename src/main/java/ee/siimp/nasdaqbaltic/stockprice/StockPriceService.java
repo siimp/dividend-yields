@@ -1,5 +1,6 @@
 package ee.siimp.nasdaqbaltic.stockprice;
 
+import ee.siimp.nasdaqbaltic.common.utils.ThreadUtils;
 import ee.siimp.nasdaqbaltic.dividend.DividendRepository;
 import ee.siimp.nasdaqbaltic.dividend.dto.DividendStockPriceDto;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StockPriceService {
+class StockPriceService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -29,7 +30,7 @@ public class StockPriceService {
         for (DividendStockPriceDto dto : pastDividendsWithoutStockPriceInfo) {
             nasdaqBalticStockPriceScraper.loadStockPrice(dto.getStockId(), dto.getStockIsin(), dto.getExDividendDate());
 
-            sleep();
+            ThreadUtils.randomSleep();
         }
     }
 
@@ -41,15 +42,8 @@ public class StockPriceService {
         LOG.info("{} future dividends are without todays stock price info", futureDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : futureDividendsWithoutStockPriceInfo) {
             nasdaqBalticStockPriceScraper.loadStockPrice(dto.getStockId(), dto.getStockIsin(), now);
-            sleep();
-        }
-    }
 
-    private void sleep() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            LOG.error(e.getMessage(), e);
+            ThreadUtils.randomSleep();
         }
     }
 

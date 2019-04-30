@@ -24,6 +24,10 @@ import java.util.List;
 @ToString
 public class Stock extends BaseEntity {
 
+    public static final String SEGMENT_MAIN_LIST = "Baltic Main List";
+    public static final String SEGMENT_SECONDARY_LIST = "Baltic Secondary List";
+    public static final String SEGMENT_FIRST_NORTH_LIST = "First North Baltic Share List";
+
     @NotBlank
     @NotNull
     private String name;

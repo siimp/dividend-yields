@@ -3,6 +3,7 @@ package ee.siimp.nasdaqbaltic.stockinfo;
 import ee.siimp.nasdaqbaltic.IntegrationTest;
 import ee.siimp.nasdaqbaltic.stock.Stock;
 import ee.siimp.nasdaqbaltic.stock.StockRepository;
+import ee.siimp.nasdaqbaltic.stockinfo.dto.StockAndIsinDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.RestTemplate;
 
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -55,24 +55,24 @@ public class NasdaqBalticStockInfoScraperTests extends IntegrationTest {
     }
 
     @Test
-    public void savesDividendSuccessfully() throws  IOException {
+    public void savesDividendSuccessfully() throws IOException {
         given(restTemplate.getForObject(any(), eq(String.class)))
                 .willReturn(Files.lines(stockInfoAprangaHtml.getFile().toPath())
                         .collect(Collectors.joining()));
 
         Optional<Long> stockOptional = stockRepository.findIdByTicker(TEST_STOCK_TICKER);
 
-        BigInteger expectedNumberOfSecuritiesValue = new BigInteger("55291960");
         Optional<StockInfo> stockInfoOptional = stockInfoRepository.
-                findByStockIdAndNumberOfSecurities(stockOptional.get(), expectedNumberOfSecuritiesValue);
+                findByStockId(stockOptional.get());
         assertThat(stockInfoOptional.isPresent()).isFalse();
 
-        nasdaqBalticStockInfoScraper.loadStockInfo(stockOptional.get(), TEST_STOCK_TICKER);
+        nasdaqBalticStockInfoScraper.loadStockInfo(new StockAndIsinDto(stockOptional.get(),
+                TEST_STOCK_TICKER, TEST_STOCK_TICKER));
 
+        BigInteger expectedNumberOfSecuritiesValue = new BigInteger("55291960");
         stockInfoOptional = stockInfoRepository.
-                findByStockIdAndNumberOfSecurities(stockOptional.get(), expectedNumberOfSecuritiesValue);
+                findByStockId(stockOptional.get());
         assertThat(stockInfoOptional.isPresent()).isTrue();
-
-
+        assertThat(stockInfoOptional.get().getNumberOfSecurities()).isEqualTo(expectedNumberOfSecuritiesValue);
     }
 }

@@ -33,11 +33,13 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
             "stockPrice.price as currentStockPrice, " +
             "((dividend.amount/stockPrice.price) * 100) as dividendYield, " +
-            "((dividend.amount/yesterdayStockPrice.price) * 100) as yesterdaysDividendYield " +
+            "((dividend.amount/yesterdayStockPrice.price) * 100) as yesterdaysDividendYield, " +
+            "(dividend.amount * coalesce(stockInfo.numberOfSecurities, null)) as dividendCost " +
             "from #{#entityName} stock " +
             "inner join Dividend dividend ON dividend.stock = stock " +
             "inner join StockPrice stockPrice ON (stockPrice.stock = stock AND stockPrice.date = CURRENT_DATE) " +
             "left join StockPrice yesterdayStockPrice ON (yesterdayStockPrice.stock = stock AND yesterdayStockPrice.date = (CURRENT_DATE - 1)) " +
+            "left join StockInfo stockInfo ON  (stockInfo.stock = stock) " +
             "where YEAR(dividend.exDividendDate) = YEAR(CURRENT_DATE) and " +
             "dividend.exDividendDate > CURRENT_DATE " +
             "order by dividendYield desc")

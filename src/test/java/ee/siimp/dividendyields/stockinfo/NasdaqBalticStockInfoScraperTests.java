@@ -4,8 +4,8 @@ import ee.siimp.dividendyields.IntegrationTest;
 import ee.siimp.dividendyields.stock.Stock;
 import ee.siimp.dividendyields.stock.StockRepository;
 import ee.siimp.dividendyields.stockinfo.dto.StockAndIsinDto;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,7 +42,7 @@ public class NasdaqBalticStockInfoScraperTests extends IntegrationTest {
     @Value("stockInfoApranga.html")
     private Resource stockInfoAprangaHtml;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Stock stock = new Stock();
         stock.setName(TEST_STOCK_TICKER);

@@ -3,8 +3,8 @@ package ee.siimp.dividendyields.dividend;
 import ee.siimp.dividendyields.IntegrationTest;
 import ee.siimp.dividendyields.stock.Stock;
 import ee.siimp.dividendyields.stock.StockRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,7 +42,7 @@ public class NasdaqBalticDividendScraperTests extends IntegrationTest {
     @Value("dividendsAndCapitalDecrease2018.html")
     private Resource dividendsAndCapitalDecrease2018Html;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Stock stock = new Stock();
         stock.setName(TEST_STOCK_TICKER);

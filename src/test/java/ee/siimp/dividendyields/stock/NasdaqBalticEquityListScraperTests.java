@@ -1,7 +1,7 @@
 package ee.siimp.dividendyields.stock;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.io.IOException;
@@ -13,12 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NasdaqBalticEquityListScraperTests {
 
-    private NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
+    private static NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
         StockProperties stockProperties = new StockProperties();
-        try (InputStream inputStream = this.getClass().getResourceAsStream("/shares_20191016.xlsx")) {
+        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream("/shares_20191016.xlsx")) {
             stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
             nasdaqBalticEquityListScraper =
                     new NasdaqBalticEquityListScraper(null, stockProperties);

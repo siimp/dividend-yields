@@ -1,21 +1,21 @@
 package ee.siimp.dividendyields.stock;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -29,14 +29,16 @@ class NasdaqBalticEquityListScraper {
     private final StockProperties stockProperties;
 
 
-    List<Stock> loadAllStocks() {
+    List<Stock> loadAllStocks()  {
 
         List<Stock> result = new ArrayList<>();
         try {
-            for (CSVRecord csvRecord : getCsvRecords()) {
-                Stock stock = getNewStock(csvRecord);
+            Iterator<Row> rows = getXslsSheet().rowIterator();
+            rows.next(); // skip header
+            rows.forEachRemaining((Row row) -> {
+                Stock stock = getNewStock(row);
                 result.add(stock);
-            }
+            });
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
             return Collections.emptyList();
@@ -45,30 +47,43 @@ class NasdaqBalticEquityListScraper {
         return result;
     }
 
-    private Stock getNewStock(CSVRecord csvRecord) {
+    private Stock getNewStock(Row row) {
         Stock stock = new Stock();
-        stock.setName(csvRecord.get(NasdaqBalticEquityListCsv.Header.NAME));
-        stock.setIsin(csvRecord.get(NasdaqBalticEquityListCsv.Header.ISIN));
-        stock.setCurrency(csvRecord.get(NasdaqBalticEquityListCsv.Header.CURRENCY));
-        stock.setTicker(csvRecord.get(NasdaqBalticEquityListCsv.Header.TICKER));
-        stock.setMarketPlace(csvRecord.get(NasdaqBalticEquityListCsv.Header.MARKET_PLACE));
-        stock.setSegment(csvRecord.get(NasdaqBalticEquityListCsv.Header.SEGMENT));
+
+        stock.setName(row.getCell(Header.NAME.ordinal()).getStringCellValue());
+        stock.setIsin(row.getCell(Header.ISIN.ordinal()).getStringCellValue());
+        stock.setCurrency(row.getCell(Header.CURRENCY.ordinal()).getStringCellValue());
+        stock.setTicker(row.getCell(Header.TICKER.ordinal()).getStringCellValue());
+        stock.setMarketPlace(row.getCell(Header.MARKET_PLACE.ordinal()).getStringCellValue());
+        stock.setSegment(row.getCell(Header.SEGMENT.ordinal()).getStringCellValue());
+
         return stock;
     }
 
-    private CSVParser getCsvRecords() throws IOException {
-        if (stockProperties.getStaticList() != null) {
-            LOG.debug("loading local csv file {}", stockProperties.getStaticList().getFilename());
-            return new CSVParser(
-                    new BufferedReader(new InputStreamReader(stockProperties.getStaticList().getInputStream(), StandardCharsets.UTF_16)),
-                    NasdaqBalticEquityListCsv.FORMAT);
-        } else {
-            LOG.debug("loading remote csv file from {}", stockProperties.getEndpoint());
-
-            String response = restTemplate.getForObject(stockProperties.getEndpoint(), String.class);
-            return new CSVParser(new StringReader(response), NasdaqBalticEquityListCsv.FORMAT);
+    private XSSFSheet getXslsSheet() throws IOException {
+        try (InputStream inputStream = getXslsInputStream()) {
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
+            return xssfWorkbook.getSheetAt(0);
         }
-
     }
 
+    private InputStream getXslsInputStream() throws IOException {
+        if (stockProperties.getStaticList() != null) {
+            LOG.debug("loading local static file {}", stockProperties.getStaticList().getFilename());
+            return stockProperties.getStaticList().getInputStream();
+        } else {
+            LOG.debug("loading remote  file from {}", stockProperties.getEndpoint());
+            String response = restTemplate.getForObject(stockProperties.getEndpoint(), String.class);
+            return new ByteArrayInputStream(response.getBytes());
+        }
+    }
+
+    enum Header {
+        TICKER,
+        NAME,
+        ISIN,
+        CURRENCY,
+        MARKET_PLACE,
+        SEGMENT
+    }
 }

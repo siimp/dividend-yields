@@ -2,21 +2,20 @@ package ee.siimp.dividendyields.stock;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +59,7 @@ class NasdaqBalticEquityListScraper {
         return stock;
     }
 
-    private XSSFSheet getXslsSheet() throws IOException {
+    private Sheet getXslsSheet() throws IOException {
         try (InputStream inputStream = getXslsInputStream()) {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
             return xssfWorkbook.getSheetAt(0);
@@ -72,7 +71,7 @@ class NasdaqBalticEquityListScraper {
             LOG.debug("loading local static file {}", stockProperties.getStaticList().getFilename());
             return stockProperties.getStaticList().getInputStream();
         } else {
-            LOG.debug("loading remote  file from {}", stockProperties.getEndpoint());
+            LOG.debug("loading remote file from {}", stockProperties.getEndpoint());
             String response = restTemplate.getForObject(stockProperties.getEndpoint(), String.class);
             return new ByteArrayInputStream(response.getBytes());
         }

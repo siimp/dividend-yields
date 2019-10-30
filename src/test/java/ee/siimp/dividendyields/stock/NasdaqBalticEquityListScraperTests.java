@@ -13,12 +13,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NasdaqBalticEquityListScraperTests {
 
+    private static final String SHARES_XLSX = "/shares_20191016.xlsx";
+
     private static NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
 
     @BeforeAll
     public static void setup() throws IOException {
         StockProperties stockProperties = new StockProperties();
-        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream("/shares_20191016.xlsx")) {
+        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream(SHARES_XLSX)) {
             stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
             nasdaqBalticEquityListScraper =
                     new NasdaqBalticEquityListScraper(null, stockProperties);

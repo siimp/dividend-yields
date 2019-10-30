@@ -1,30 +1,24 @@
 package ee.siimp.dividendyields.dividend;
 
-import ee.siimp.dividendyields.common.utils.DateUtils;
-import ee.siimp.dividendyields.stock.Stock;
-import ee.siimp.dividendyields.stock.StockRepository;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Transactional
@@ -32,6 +26,64 @@ import java.util.stream.Stream;
 class NasdaqBalticDividendScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    private static final String EVENT_CAPITAL_DECREASE = "Capital decrease payment date";
+
+    private static final String EVENT_DIVIDEND = "Dividend payment date";
+
+    private final RestTemplate restTemplate;
+
+    private final DividendProperties dividendProperties;
+
+    List<Dividend> loadYearDividends(int year) {
+        List<Dividend> result = new ArrayList<>();
+
+        try {
+            Iterator<Row> rows = getXslsSheet().rowIterator();
+            rows.next(); // skip header
+            rows.forEachRemaining((Row row) -> {
+                Dividend dividend = getNewDividend(row);
+                result.add(dividend);
+            });
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+
+        return result;
+    }
+
+    private Dividend getNewDividend(Row row) {
+        Dividend dividend = new Dividend();
+        dividend.setAmount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()));
+        String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
+        dividend.setCapitalDecrease(EVENT_CAPITAL_DECREASE.equals(event));
+        return dividend;
+    }
+
+    private Sheet getXslsSheet() throws IOException {
+        try (InputStream inputStream = getXslsInputStream()) {
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
+            return xssfWorkbook.getSheetAt(0);
+        }
+    }
+
+    private InputStream getXslsInputStream() {
+        LOG.debug("loading remote file from {}", dividendProperties.getEndpoint());
+        String response = restTemplate.getForObject(dividendProperties.getEndpoint(), String.class);
+        return new ByteArrayInputStream(response.getBytes());
+    }
+
+    enum Header {
+        ISSUER,
+        TICKER,
+        MARKET,
+        DATE,
+        EVENT,
+        AMOUNT
+    }
+
+    /*
 
     private static final String URI_QUERY_PARAM_YEAR = "year";
 
@@ -156,9 +208,6 @@ class NasdaqBalticDividendScraper {
         return Optional.of(response.substring(startIndex, endIndex + DATA_JAVASCRIPT_END.length()));
     }
 
-}
+     */
 
-@FunctionalInterface
-interface DividendDataConsumer {
-    void accept(String ticker, BigDecimal amount, LocalDate exDividendDate, String currency, boolean isCapitalDecrease);
 }

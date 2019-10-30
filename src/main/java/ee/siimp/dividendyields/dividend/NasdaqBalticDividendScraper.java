@@ -1,5 +1,8 @@
 package ee.siimp.dividendyields.dividend;
 
+import ee.siimp.dividendyields.common.utils.DateUtils;
+import ee.siimp.dividendyields.stock.Stock;
+import ee.siimp.dividendyields.stock.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -9,16 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -29,11 +30,13 @@ class NasdaqBalticDividendScraper {
 
     private static final String EVENT_CAPITAL_DECREASE = "Capital decrease payment date";
 
-    private static final String EVENT_DIVIDEND = "Dividend payment date";
-
     private final RestTemplate restTemplate;
 
     private final DividendProperties dividendProperties;
+
+    private final StockRepository stockRepository;
+
+    private final EntityManager entityManager;
 
     List<Dividend> loadYearDividends(int year) {
         List<Dividend> result = new ArrayList<>();
@@ -42,8 +45,10 @@ class NasdaqBalticDividendScraper {
             Iterator<Row> rows = getXslsSheet().rowIterator();
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
-                Dividend dividend = getNewDividend(row);
-                result.add(dividend);
+                Optional<Dividend> dividend = getNewDividend(row);
+                dividend.ifPresentOrElse(result::add, () ->  {
+                    LOG.warn("skipping dividend for row {}", row);
+                });
             });
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -53,12 +58,36 @@ class NasdaqBalticDividendScraper {
         return result;
     }
 
-    private Dividend getNewDividend(Row row) {
+    private Optional<Dividend> getNewDividend(Row row) {
+        Stock stock = getStock(row.getCell(Header.TICKER.ordinal()).getStringCellValue());
+        if (stock == null) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(getDividendFromRow(row, stock));
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return Optional.empty();
+        }
+    }
+
+    private Dividend getDividendFromRow(Row row, Stock stock) {
+        LOG.info("Parsing dividend for {}", row.getCell(Header.TICKER.ordinal()).getStringCellValue());
+
         Dividend dividend = new Dividend();
+        dividend.setStock(stock);
         dividend.setAmount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()));
+        dividend.setExDividendDate(DateUtils.parseEstonianDate(row.getCell(Header.DATE.ordinal()).getStringCellValue()));
         String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
         dividend.setCapitalDecrease(EVENT_CAPITAL_DECREASE.equals(event));
         return dividend;
+    }
+
+    private Stock getStock(String ticker) {
+        return stockRepository.findIdByTicker(ticker)
+                .map(id -> entityManager.getReference(Stock.class, id))
+                .orElse(null);
     }
 
     private Sheet getXslsSheet() throws IOException {
@@ -82,132 +111,5 @@ class NasdaqBalticDividendScraper {
         EVENT,
         AMOUNT
     }
-
-    /*
-
-    private static final String URI_QUERY_PARAM_YEAR = "year";
-
-    private static final ScriptEngine JAVASCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("nashorn");
-
-    private static final String DATA_JAVASCRIPT_ATTRIBUTE = "data";
-
-    private static final String DATA_JAVASCRIPT_START = "var data = [{";
-
-    private static final String DATA_JAVASCRIPT_END = "}]";
-
-    private static final String DATA_TICKER = "ticker";
-
-    private static final String DATA_AMOUNT = "amount";
-
-    private static final String DATA_CURRENCY = "ccy";
-
-    private static final String DATA_DATE = "starts";
-
-    private static final String DATA_TYPE = "type";
-
-    private static final String DATA_TYPE_CAPITAL_DECREASE = "capital-decrease";
-
-
-    private final DividendProperties dividendProperties;
-
-    private final StockRepository stockRepository;
-
-    private final DividendRepository dividendRepository;
-
-    private final EntityManager em;
-
-    private final RestTemplate restTemplate;
-
-    void loadYearDividends(int year) throws ScriptException {
-        URI endpoint = UriComponentsBuilder.fromHttpUrl(dividendProperties.getEndpoint())
-                .queryParam(URI_QUERY_PARAM_YEAR, year).build().toUri();
-
-        LOG.info("loading year {} dividends from {}", year, endpoint);
-
-        String response = restTemplate.getForObject(endpoint, String.class);
-
-        handleResponse(response);
-    }
-
-    private void handleResponse(String response) throws ScriptException {
-        if (StringUtils.hasText(response)) {
-            Optional<String> javaScriptDataValueOptional = getDataJavascriptValue(response);
-            if (javaScriptDataValueOptional.isPresent()) {
-                getDividendInfo(javaScriptDataValueOptional.get(), (ticker, amount, exDividendDate, currency, isCapitalDecrease) ->
-                        stockRepository.findIdByTicker(ticker).ifPresent(stockId ->
-                                saveNewDividend(amount, exDividendDate, currency, stockId, isCapitalDecrease, ticker)
-                        )
-                );
-            }
-        }
-    }
-
-    private void saveNewDividend(BigDecimal amount, LocalDate exDividendDate, String currency,
-                                 Long stockId, boolean isCapitalDecrease, String ticker) {
-        if (!dividendRepository.existsByStockIdAndExDividendDate(stockId, exDividendDate)) {
-            LOG.info("saving dividend for {} with amount {} on {}", ticker, amount, exDividendDate);
-            Dividend dividend = new Dividend();
-            dividend.setAmount(amount);
-            dividend.setExDividendDate(exDividendDate);
-            dividend.setStock(em.getReference(Stock.class, stockId));
-            dividend.setCurrency(currency);
-            dividend.setCapitalDecrease(isCapitalDecrease);
-            dividendRepository.save(dividend);
-        } else {
-            if (isCapitalDecrease) {
-                // in case of capital decrease input data has two seperate events for that (Dividend ex-date and Capital decrease ex-date)
-                LOG.info("marking dividend for {} with amount {} on {} as capital decrease", ticker, amount, exDividendDate);
-                Dividend dividend = dividendRepository.findByStockIdAndExDividendDate(stockId, exDividendDate);
-                dividend.setCapitalDecrease(true);
-                dividendRepository.save(dividend);
-            } else {
-                LOG.info("dividend for {} with stock id {} and ex-dividend date {} already exist. isCapitalDecrease = {}",
-                        ticker, stockId, exDividendDate, isCapitalDecrease);
-            }
-        }
-    }
-
-    private void getDividendInfo(String javaScriptDataValue, DividendDataConsumer consumer) throws ScriptException {
-        ScriptContext ctx = new SimpleScriptContext();
-        ctx.setBindings(JAVASCRIPT_ENGINE.createBindings(), ScriptContext.ENGINE_SCOPE);
-        JAVASCRIPT_ENGINE.eval(javaScriptDataValue, ctx);
-        ScriptObjectMirror data = (ScriptObjectMirror) ctx.getAttribute(DATA_JAVASCRIPT_ATTRIBUTE);
-
-        if (data.isArray()) {
-            data.forEach((k, v) -> {
-                ScriptObjectMirror value = (ScriptObjectMirror) v;
-                assertAndAcceptDividendInfo(consumer, value);
-            });
-        }
-    }
-
-    private void assertAndAcceptDividendInfo(DividendDataConsumer consumer, ScriptObjectMirror value) {
-        String ticker = (String) value.get(DATA_TICKER);
-        String amount = (String) value.get(DATA_AMOUNT);
-        String date = (String) value.get(DATA_DATE);
-        String currency = (String) value.get(DATA_CURRENCY);
-        String type = (String) value.get(DATA_TYPE);
-
-        if (Stream.of(ticker, amount, date, currency, type).allMatch(StringUtils::hasText)) {
-            consumer.accept(ticker, new BigDecimal(amount), DateUtils.parseEstonianDate(date),
-                    currency, DATA_TYPE_CAPITAL_DECREASE.equals(type));
-        } else {
-            LOG.error("one of the dividend values has no content ticker={}, amount={}, date={}, currency={}, type={}",
-                    ticker, amount, date, currency, type);
-        }
-    }
-
-    private Optional<String> getDataJavascriptValue(String response) {
-        int startIndex = response.indexOf(DATA_JAVASCRIPT_START);
-
-        if (startIndex < 0) {
-            return Optional.empty();
-        }
-
-        int endIndex = response.indexOf(DATA_JAVASCRIPT_END, startIndex);
-        return Optional.of(response.substring(startIndex, endIndex + DATA_JAVASCRIPT_END.length()));
-    }
-
-     */
 
 }

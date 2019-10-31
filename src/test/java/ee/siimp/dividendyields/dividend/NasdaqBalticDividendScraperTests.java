@@ -1,32 +1,36 @@
 package ee.siimp.dividendyields.dividend;
 
-import ee.siimp.dividendyields.stock.NasdaqBalticEquityListScraperTests;
+import ee.siimp.dividendyields.dividend.dto.DividendDto;
+import ee.siimp.dividendyields.stock.NasdaqBalticStockListScraperTests;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ByteArrayResource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class NasdaqBalticDividendScraperTests {
 
-    private static final String TEST_STOCK_TICKER = "SFG1T";
-
-    private static final String DIVIDENDS_XLSX = "/dividends_20191016.xlsx";
+    private static final String DIVIDENDS_XLSX = "/dividends_20191030.xlsx";
 
     private static NasdaqBalticDividendScraper nasdaqBalticDividendScraper;
 
     @BeforeAll
     public static void setUp() throws IOException {
         DividendProperties dividendProperties = new DividendProperties();
-        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream(DIVIDENDS_XLSX)) {
-            // stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
+        try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(DIVIDENDS_XLSX)) {
+            dividendProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
             nasdaqBalticDividendScraper = new NasdaqBalticDividendScraper(null, dividendProperties);
         }
     }
 
     @Test
     public void savesDividendSuccessfully() {
-        nasdaqBalticDividendScraper.loadYearDividends(2019);
+        List<DividendDto> dividends = nasdaqBalticDividendScraper.loadYearDividends(2019);
+        assertThat(dividends.size()).isEqualTo(43);
     }
 }

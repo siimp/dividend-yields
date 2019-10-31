@@ -1,8 +1,7 @@
 package ee.siimp.dividendyields.dividend;
 
 import ee.siimp.dividendyields.common.utils.DateUtils;
-import ee.siimp.dividendyields.stock.Stock;
-import ee.siimp.dividendyields.stock.StockRepository;
+import ee.siimp.dividendyields.dividend.dto.DividendDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -11,14 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -29,25 +29,22 @@ class NasdaqBalticDividendScraper {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final String EVENT_CAPITAL_DECREASE = "Capital decrease payment date";
+    private static final String EVENT_DIVIDEND_EX_DATE = "Dividend ex-date";
 
     private final RestTemplate restTemplate;
 
     private final DividendProperties dividendProperties;
 
-    private final StockRepository stockRepository;
-
-    private final EntityManager entityManager;
-
-    List<Dividend> loadYearDividends(int year) {
-        List<Dividend> result = new ArrayList<>();
+    List<DividendDto> loadYearDividends(int year) {
+        List<DividendDto> result = new ArrayList<>();
 
         try {
-            Iterator<Row> rows = getXslsSheet().rowIterator();
+            Iterator<Row> rows = getXslsSheet(year).rowIterator();
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
-                Optional<Dividend> dividend = getNewDividend(row);
+                Optional<DividendDto> dividend = getNewDividend(row);
                 dividend.ifPresentOrElse(result::add, () ->  {
-                    LOG.warn("skipping dividend for row {}", row);
+                    LOG.warn("skipping dividend for row");
                 });
             });
         } catch (Exception e) {
@@ -58,49 +55,56 @@ class NasdaqBalticDividendScraper {
         return result;
     }
 
-    private Optional<Dividend> getNewDividend(Row row) {
-        Stock stock = getStock(row.getCell(Header.TICKER.ordinal()).getStringCellValue());
-        if (stock == null) {
-            return Optional.empty();
-        }
-
+    private Optional<DividendDto> getNewDividend(Row row) {
         try {
-            return Optional.of(getDividendFromRow(row, stock));
+            return Optional.ofNullable(getDividendFromRow(row));
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return Optional.empty();
         }
     }
 
-    private Dividend getDividendFromRow(Row row, Stock stock) {
-        LOG.info("Parsing dividend for {}", row.getCell(Header.TICKER.ordinal()).getStringCellValue());
-
-        Dividend dividend = new Dividend();
-        dividend.setStock(stock);
-        dividend.setAmount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()));
-        dividend.setExDividendDate(DateUtils.parseEstonianDate(row.getCell(Header.DATE.ordinal()).getStringCellValue()));
+    private DividendDto getDividendFromRow(Row row) {
+        String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
         String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
-        dividend.setCapitalDecrease(EVENT_CAPITAL_DECREASE.equals(event));
-        return dividend;
+        LOG.info("Parsing dividend event {} for {}", event, ticker);
+
+        if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE.equals(event))) {
+            LOG.warn("skipping event {}", event);
+            return null;
+        }
+
+        return DividendDto.builder()
+                .ticker(ticker)
+                .issuer(row.getCell(Header.ISSUER.ordinal()).getStringCellValue())
+                .market(row.getCell(Header.MARKET.ordinal()).getStringCellValue())
+                .amount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()))
+                .exDividendDate(DateUtils.convertToLocalDate(row.getCell(Header.DATE.ordinal()).getDateCellValue()))
+                .capitalDecrease(EVENT_CAPITAL_DECREASE.equals(event))
+                .build();
     }
 
-    private Stock getStock(String ticker) {
-        return stockRepository.findIdByTicker(ticker)
-                .map(id -> entityManager.getReference(Stock.class, id))
-                .orElse(null);
-    }
-
-    private Sheet getXslsSheet() throws IOException {
-        try (InputStream inputStream = getXslsInputStream()) {
+    private Sheet getXslsSheet(int year) throws IOException {
+        try (InputStream inputStream = getXslsInputStream(year)) {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
             return xssfWorkbook.getSheetAt(0);
         }
     }
 
-    private InputStream getXslsInputStream() {
-        LOG.debug("loading remote file from {}", dividendProperties.getEndpoint());
-        String response = restTemplate.getForObject(dividendProperties.getEndpoint(), String.class);
-        return new ByteArrayInputStream(response.getBytes());
+    private InputStream getXslsInputStream(int year) throws IOException {
+        if (dividendProperties.getStaticList() != null) {
+            LOG.debug("loading local static file {}", dividendProperties.getStaticList().getFilename());
+            return dividendProperties.getStaticList().getInputStream();
+        } else {
+            String endpointUri = UriComponentsBuilder.fromHttpUrl(dividendProperties.getEndpoint())
+                    .queryParam("filter", "1")
+                    .queryParam("from", year + "-01-01")
+                    .queryParam("to", year + "12-31")
+                    .toUriString();
+            LOG.debug("loading remote file from {}", endpointUri);
+            String response = restTemplate.getForObject(endpointUri, String.class);
+            return new ByteArrayInputStream(response.getBytes());
+        }
     }
 
     enum Header {

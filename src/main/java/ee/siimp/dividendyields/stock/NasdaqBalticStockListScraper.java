@@ -19,7 +19,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-class NasdaqBalticEquityListScraper {
+class NasdaqBalticStockListScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

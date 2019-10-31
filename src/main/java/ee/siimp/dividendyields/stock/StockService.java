@@ -25,7 +25,7 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    private final NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
+    private final NasdaqBalticStockListScraper nasdaqBalticStockListScraper;
 
     public void updateStockInformation() {
         LOG.info("updating stock infromation");
@@ -33,7 +33,7 @@ public class StockService {
                 .map(Stock::getTicker)
                 .collect(Collectors.toList());
 
-        List<Stock> newStocks = nasdaqBalticEquityListScraper.loadAllStocks().stream()
+        List<Stock> newStocks = nasdaqBalticStockListScraper.loadAllStocks().stream()
                 .filter(it -> !existingStockNames.contains(it.getTicker()))
                 .collect(Collectors.toList());
 

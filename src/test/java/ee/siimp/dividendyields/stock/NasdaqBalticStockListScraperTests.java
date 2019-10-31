@@ -11,25 +11,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class NasdaqBalticEquityListScraperTests {
+public class NasdaqBalticStockListScraperTests {
 
     private static final String SHARES_XLSX = "/shares_20191016.xlsx";
 
-    private static NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
+    private static NasdaqBalticStockListScraper nasdaqBalticStockListScraper;
 
     @BeforeAll
     public static void setup() throws IOException {
         StockProperties stockProperties = new StockProperties();
-        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream(SHARES_XLSX)) {
+        try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(SHARES_XLSX)) {
             stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
-            nasdaqBalticEquityListScraper =
-                    new NasdaqBalticEquityListScraper(null, stockProperties);
+            nasdaqBalticStockListScraper =
+                    new NasdaqBalticStockListScraper(null, stockProperties);
         }
     }
 
     @Test
     public void shouldParseSuccessfully() {
-        List<Stock> stocks = nasdaqBalticEquityListScraper.loadAllStocks();
+        List<Stock> stocks = nasdaqBalticStockListScraper.loadAllStocks();
         assertThat(stocks).isNotEmpty();
     }
 }

@@ -3,7 +3,9 @@ package ee.siimp.dividendyields.common.utils;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @UtilityClass
 public class DateUtils {
@@ -16,5 +18,9 @@ public class DateUtils {
 
     public static String formatEstonianDate(LocalDate date) {
         return date.format(ESTONIAN_DATE_FORMATTER);
+    }
+
+    public static LocalDate convertToLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

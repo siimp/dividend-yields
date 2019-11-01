@@ -1,15 +1,16 @@
 package ee.siimp.dividendyields.dividend;
 
-import ee.siimp.dividendyields.common.entity.BaseEntity;
-import ee.siimp.dividendyields.stock.Stock;
-import lombok.Getter;
-import lombok.Setter;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+
+import ee.siimp.dividendyields.common.entity.BaseEntity;
+import ee.siimp.dividendyields.stock.Stock;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"stock_id", "exDividendDate"}, name = "uc_dividend_stock_id_ex_dividend_date"))

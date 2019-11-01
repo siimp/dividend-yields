@@ -44,9 +44,8 @@ class NasdaqBalticDividendScraper {
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
                 Optional<DividendDto> dividend = getNewDividend(row);
-                dividend.ifPresentOrElse(result::add, () -> {
-                    LOG.warn("skipping dividend row");
-                });
+                dividend.ifPresentOrElse(result::add, () ->
+                        LOG.warn("skipping dividend row"));
             });
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

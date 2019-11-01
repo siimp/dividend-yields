@@ -1,35 +1,33 @@
 package ee.siimp.dividendyields;
 
+import java.lang.invoke.MethodHandles;
+
 import ee.siimp.dividendyields.dividend.DividendService;
 import ee.siimp.dividendyields.stock.StockService;
+
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.lang.invoke.MethodHandles;
-
 @Component
+@RequiredArgsConstructor
 public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
-    private DividendService dividendService;
+    private final DividendService dividendService;
 
-    @Autowired
-    private StockService stockService;
+    private final StockService stockService;
 
-    @Value("${nasdaqbaltic.load-initial-data}")
-    private Boolean loadInitialData;
+    private final NasdaqBalticProperties nasdaqBalticProperties;
 
     @Override
     public void afterPropertiesSet() {
         LOG.info("bootstraping application");
 
-        if (Boolean.TRUE.equals(loadInitialData)) {
+        if (Boolean.TRUE.equals(nasdaqBalticProperties.isLoadInitialData())) {
             stockService.updateStockInformation();
             dividendService.updateDividendInformation();
         }

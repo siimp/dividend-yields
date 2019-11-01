@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import ee.siimp.dividendyields.common.entity.BaseEntity;
 
 import ee.siimp.dividendyields.dividend.Dividend;
+import ee.siimp.dividendyields.stock.dto.StockDto;
 import ee.siimp.dividendyields.stockprice.StockPrice;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,4 +59,14 @@ public class Stock extends BaseEntity {
     @OneToMany(mappedBy = "stock")
     private List<StockPrice> prices;
 
+    static Stock of(StockDto dto) {
+        Stock stock = new Stock();
+        stock.setName(dto.getName());
+        stock.setIsin(dto.getIsin());
+        stock.setCurrency(dto.getCurrency());
+        stock.setTicker(dto.getTicker());
+        stock.setMarketPlace(dto.getMarketPlace());
+        stock.setSegment(dto.getSegment());
+        return stock;
+    }
 }

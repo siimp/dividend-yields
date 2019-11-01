@@ -1,7 +1,16 @@
 package ee.siimp.dividendyields.dividend;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
+import java.util.*;
+import javax.transaction.Transactional;
+
 import ee.siimp.dividendyields.common.utils.DateUtils;
 import ee.siimp.dividendyields.dividend.dto.DividendDto;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -12,15 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.util.*;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,6 +29,7 @@ class NasdaqBalticDividendScraper {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final String EVENT_CAPITAL_DECREASE = "Capital decrease payment date";
+
     private static final String EVENT_DIVIDEND_EX_DATE = "Dividend ex-date";
 
     private final RestTemplate restTemplate;
@@ -43,8 +44,8 @@ class NasdaqBalticDividendScraper {
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
                 Optional<DividendDto> dividend = getNewDividend(row);
-                dividend.ifPresentOrElse(result::add, () ->  {
-                    LOG.warn("skipping dividend for row");
+                dividend.ifPresentOrElse(result::add, () -> {
+                    LOG.warn("skipping dividend row");
                 });
             });
         } catch (Exception e) {
@@ -67,14 +68,14 @@ class NasdaqBalticDividendScraper {
     private DividendDto getDividendFromRow(Row row) {
         String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
         String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
-        LOG.info("Parsing dividend event {} for {}", event, ticker);
+        LOG.info("Parsing dividend event \"{}\" for {}", event, ticker);
 
         if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE.equals(event))) {
             LOG.warn("skipping event {}", event);
             return null;
         }
 
-        return DividendDto.builder()
+        DividendDto result = DividendDto.builder()
                 .ticker(ticker)
                 .issuer(row.getCell(Header.ISSUER.ordinal()).getStringCellValue())
                 .market(row.getCell(Header.MARKET.ordinal()).getStringCellValue())
@@ -82,6 +83,8 @@ class NasdaqBalticDividendScraper {
                 .exDividendDate(DateUtils.convertToLocalDate(row.getCell(Header.DATE.ordinal()).getDateCellValue()))
                 .capitalDecrease(EVENT_CAPITAL_DECREASE.equals(event))
                 .build();
+        LOG.info("parsed successfully");
+        return result;
     }
 
     private Sheet getXslsSheet(int year) throws IOException {

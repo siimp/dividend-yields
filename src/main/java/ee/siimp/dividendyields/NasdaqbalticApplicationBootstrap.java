@@ -1,6 +1,7 @@
 package ee.siimp.dividendyields;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 
 import ee.siimp.dividendyields.dividend.DividendService;
 import ee.siimp.dividendyields.stock.StockService;
@@ -25,14 +26,17 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        LOG.info("bootstraping application");
+        LOG.info("bootstrapping application");
 
-        if (Boolean.TRUE.equals(nasdaqBalticProperties.isLoadInitialData())) {
+        if (nasdaqBalticProperties.isUpdateStocksOnStartup()) {
             stockService.updateStockInformation();
-            dividendService.updateDividendInformation();
         }
 
-        LOG.info("bootstraping finished");
+        if (nasdaqBalticProperties.isUpdateDividendsOnStartup()) {
+            dividendService.updateDividendInformation(LocalDate.now().getYear());
+        }
+
+        LOG.info("bootstrapping finished");
     }
 
 }

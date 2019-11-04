@@ -9,13 +9,15 @@ import javax.validation.constraints.NotNull;
 import ee.siimp.dividendyields.common.entity.BaseEntity;
 import ee.siimp.dividendyields.stock.Stock;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"stock_id", "exDividendDate"}, name = "uc_dividend_stock_id_ex_dividend_date"))
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Dividend extends BaseEntity {
 
     @NotNull
@@ -32,6 +34,7 @@ public class Dividend extends BaseEntity {
     private BigDecimal amount;
 
     @NotNull
+    @Builder.Default
     private boolean capitalDecrease = false;
 
 }

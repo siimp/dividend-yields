@@ -1,16 +1,7 @@
 package ee.siimp.dividendyields.dividend;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
-import java.util.*;
-import javax.transaction.Transactional;
-
 import ee.siimp.dividendyields.common.utils.DateUtils;
 import ee.siimp.dividendyields.dividend.dto.DividendDto;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,6 +11,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,6 +39,7 @@ class NasdaqBalticDividendScraper {
     private final DividendProperties dividendProperties;
 
     List<DividendDto> loadYearDividends(int year) {
+        LOG.info("loading dividends by year {}", year);
         List<DividendDto> result = new ArrayList<>();
 
         try {
@@ -44,14 +47,13 @@ class NasdaqBalticDividendScraper {
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
                 Optional<DividendDto> dividend = getNewDividend(row);
-                dividend.ifPresentOrElse(result::add, () ->
-                        LOG.warn("skipping dividend row"));
+                dividend.ifPresent(result::add);
             });
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-            return Collections.emptyList();
         }
 
+        LOG.info("finished loading dividends");
         return result;
     }
 

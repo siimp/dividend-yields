@@ -1,5 +1,6 @@
 package ee.siimp.dividendyields.dividend;
 
+import ee.siimp.dividendyields.dividend.dto.DividendTickerExDividendDateDto;
 import ee.siimp.dividendyields.dividend.dto.DividendStockPriceDto;
 import ee.siimp.dividendyields.dividendyield.DividendYieldController;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,4 +39,9 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
     <S extends Dividend> S save(S entity);
 
 
+    @Query("select stock.ticker as ticker, dividend.exDividendDate as exDividendDate, dividend.capitalDecrease as capitalDecrease " +
+            "from #{#entityName} dividend " +
+            "inner join dividend.stock stock " +
+            "where YEAR(dividend.exDividendDate) = ?1")
+    List<DividendTickerExDividendDateDto> findAllByYear(int year);
 }

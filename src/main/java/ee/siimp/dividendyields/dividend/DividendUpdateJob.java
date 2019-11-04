@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ class DividendUpdateJob {
     @Scheduled(cron = "#{dividendProperties.getUpdateJobCron()}")
     void execute() {
         LOG.info("executing");
-        dividendService.updateDividendInformation();
+        dividendService.updateDividendInformation(LocalDate.now().getYear());
         LOG.info("done");
     }
 }

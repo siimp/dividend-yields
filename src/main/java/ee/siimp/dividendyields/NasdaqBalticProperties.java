@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 public class NasdaqBalticProperties {
 
-    private boolean loadInitialData;
+    private boolean updateStocksOnStartup;
+
+    private boolean updateDividendsOnStartup;
 
 }

@@ -30,7 +30,7 @@ class NasdaqBalticDividendScraper {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String EVENT_CAPITAL_DECREASE = "Capital decrease payment date";
+    private static final String EVENT_CAPITAL_DECREASE_EX_DATE = "Capital decrease ex-date";
 
     private static final String EVENT_DIVIDEND_EX_DATE = "Dividend ex-date";
 
@@ -47,7 +47,11 @@ class NasdaqBalticDividendScraper {
             rows.next(); // skip header
             rows.forEachRemaining((Row row) -> {
                 Optional<DividendDto> dividend = getNewDividend(row);
-                dividend.ifPresent(result::add);
+                if (dividend.isPresent()) {
+                    DividendDto dto = dividend.get();
+                    LOG.debug("found dividend with amount {} for {}", dto.getAmount(), dto.getTicker());
+                    result.add(dto);
+                }
             });
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -67,14 +71,19 @@ class NasdaqBalticDividendScraper {
     }
 
     private DividendDto getDividendFromRow(Row row) {
-        String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
-        String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
-        LOG.info("Parsing dividend event \"{}\" for {}", event, ticker);
-
-        if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE.equals(event))) {
-            LOG.warn("skipping event {}", event);
+        if (row == null || row.getCell(Header.EVENT.ordinal()) == null) {
             return null;
         }
+
+
+        String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
+        if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))) {
+            LOG.debug("skipping event {}", event);
+            return null;
+        }
+
+        String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
+        LOG.debug("Parsing dividend event \"{}\" for {}", event, ticker);
 
         DividendDto result = DividendDto.builder()
                 .ticker(ticker)
@@ -82,9 +91,9 @@ class NasdaqBalticDividendScraper {
                 .market(row.getCell(Header.MARKET.ordinal()).getStringCellValue())
                 .amount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()))
                 .exDividendDate(DateUtils.convertToLocalDate(row.getCell(Header.DATE.ordinal()).getDateCellValue()))
-                .capitalDecrease(EVENT_CAPITAL_DECREASE.equals(event))
+                .capitalDecrease(EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))
                 .build();
-        LOG.info("parsed successfully");
+        LOG.debug("Parsed successfully dividend event \"{}\" for {}", event, ticker);
         return result;
     }
 

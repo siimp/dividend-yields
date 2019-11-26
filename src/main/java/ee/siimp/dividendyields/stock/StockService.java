@@ -41,11 +41,12 @@ public class StockService {
         for (Stock stock : newStocks) {
             Set<ConstraintViolation<Stock>> errors = validator.validate(stock);
             if (CollectionUtils.isEmpty(errors)) {
-                LOG.debug("adding new stock {}", stock);
+                LOG.info("adding new stock {}", stock);
                 stockRepository.save(stock);
             } else {
                 LOG.warn("stock {} validation failed {}", stock, errors);
             }
         }
+        LOG.info("updating stock information finished");
     }
 }

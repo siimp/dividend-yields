@@ -1,24 +1,14 @@
 package ee.siimp.dividendyields.dividend;
 
-import ee.siimp.dividendyields.dividend.dto.DividendTickerExDividendDateDto;
 import ee.siimp.dividendyields.dividend.dto.DividendStockPriceDto;
 import ee.siimp.dividendyields.dividendyield.DividendYieldController;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface DividendRepository extends JpaRepository<Dividend, Long> {
-
-    boolean existsByStockIdAndExDividendDate(Long stockId, LocalDate exDividendDate);
-
-    Dividend findByStockIdAndExDividendDate(Long stockId, LocalDate exDividendDate);
-
-    //limit is not supported by @Query
-    @Query("select count(*) > 0 from #{#entityName} where YEAR(exDividendDate) = ?1")
-    boolean existsByYear(int year);
 
     @Query("select stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
             "from #{#entityName} dividend " +
@@ -38,10 +28,5 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
     @Override
     <S extends Dividend> S save(S entity);
 
-
-    @Query("select stock.ticker as ticker, dividend.exDividendDate as exDividendDate, dividend.capitalDecrease as capitalDecrease " +
-            "from #{#entityName} dividend " +
-            "inner join dividend.stock stock " +
-            "where YEAR(dividend.exDividendDate) = ?1")
-    List<DividendTickerExDividendDateDto> findAllByYear(int year);
+    <T> List<T> findAllBy(Class<T> type);
 }

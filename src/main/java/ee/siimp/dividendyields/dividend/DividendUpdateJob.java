@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Component
 @RequiredArgsConstructor
 class DividendUpdateJob {
-
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final DividendService dividendService;

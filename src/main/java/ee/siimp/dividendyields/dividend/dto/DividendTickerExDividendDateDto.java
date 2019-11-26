@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 
 public interface DividendTickerExDividendDateDto {
-    String getTicker();
+    String getStockTicker();
     LocalDate getExDividendDate();
     boolean isCapitalDecrease();
 }

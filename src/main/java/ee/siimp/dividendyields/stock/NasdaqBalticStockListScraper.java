@@ -49,7 +49,7 @@ class NasdaqBalticStockListScraper {
 
     private StockDto getNewStock(Row row) {
         String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
-        LOG.info("parsing stock {}", ticker);
+        LOG.debug("parsing stock {}", ticker);
         StockDto result = StockDto.builder()
                 .name(row.getCell(Header.NAME.ordinal()).getStringCellValue())
                 .isin(row.getCell(Header.ISIN.ordinal()).getStringCellValue())
@@ -58,7 +58,7 @@ class NasdaqBalticStockListScraper {
                 .marketPlace(row.getCell(Header.MARKET_PLACE.ordinal()).getStringCellValue())
                 .segment(row.getCell(Header.SEGMENT.ordinal()).getStringCellValue())
                 .build();
-        LOG.info("parsed successfully");
+        LOG.debug("parsed stock {} successfully", ticker);
         return result;
     }
 

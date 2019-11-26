@@ -44,7 +44,7 @@ public class DividendService {
         Map<String, Long> stockIds = stockRepository.findAllBy(StockIdTickerDto.class)
                 .stream().collect(Collectors.toMap(StockIdTickerDto::getTicker, StockIdTickerDto::getId));
 
-        List<DividendTickerExDividendDateDto> existingDividends = getExistingDividends(year);
+        List<DividendTickerExDividendDateDto> existingDividends = getExistingDividends();
         List<Dividend> newDividends = nasdaqBalticDividendScraper.loadYearDividends(year).stream()
                 .filter(dto -> !exists(dto, existingDividends))
                 .filter(dto -> stockExists(dto, stockIds))
@@ -59,17 +59,17 @@ public class DividendService {
 
     private static boolean exists(DividendDto dto, List<DividendTickerExDividendDateDto> existingDividends) {
         for (DividendTickerExDividendDateDto existingDividend : existingDividends) {
-            if (existingDividend.getTicker().equals(dto.getTicker()) &&
+            if (existingDividend.getStockTicker().equals(dto.getTicker()) &&
                     existingDividend.getExDividendDate().equals(dto.getExDividendDate()) &&
-            existingDividend.isCapitalDecrease() == dto.isCapitalDecrease()) {
+                    existingDividend.isCapitalDecrease() == dto.isCapitalDecrease()) {
                 return true;
             }
         }
         return false;
     }
 
-    private List<DividendTickerExDividendDateDto> getExistingDividends(int year) {
-        return dividendRepository.findAllByYear(year);
+    private List<DividendTickerExDividendDateDto> getExistingDividends() {
+        return dividendRepository.findAllBy(DividendTickerExDividendDateDto.class);
     }
 
     private Dividend toDividend(DividendDto dto, Map<String, Long> stockIds) {
@@ -85,7 +85,7 @@ public class DividendService {
         for (Dividend dividend : newDividends) {
             Set<ConstraintViolation<Dividend>> errors = validator.validate(dividend);
             if (CollectionUtils.isEmpty(errors)) {
-                LOG.debug("adding new dividend {}", dividend);
+                LOG.info("adding new dividend {}", dividend);
                 dividendRepository.save(dividend);
             } else {
                 LOG.warn("dividend {} validation failed {}", dividend, errors);

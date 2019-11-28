@@ -37,4 +37,14 @@ public class Dividend extends BaseEntity {
     @Builder.Default
     private boolean capitalDecrease = false;
 
+
+    @Override
+    public String toString() {
+        return "Dividend{" +
+                "stock=" + stock.getTicker() +
+                ", exDividendDate=" + exDividendDate +
+                ", amount=" + amount +
+                ", capitalDecrease=" + capitalDecrease +
+                '}';
+    }
 }

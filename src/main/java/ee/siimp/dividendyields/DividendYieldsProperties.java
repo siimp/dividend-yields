@@ -8,10 +8,10 @@ import org.springframework.validation.annotation.Validated;
 
 @Component
 @Validated
-@ConfigurationProperties(prefix = "nasdaqbaltic")
+@ConfigurationProperties(prefix = "dividend-yields")
 @Getter
 @Setter
-public class NasdaqBalticProperties {
+public class DividendYieldsProperties {
 
     private boolean updateStocksOnStartup;
 

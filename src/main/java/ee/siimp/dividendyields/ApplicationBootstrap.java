@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
-public class NasdaqbalticApplicationBootstrap implements InitializingBean {
+public class ApplicationBootstrap implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -22,17 +22,17 @@ public class NasdaqbalticApplicationBootstrap implements InitializingBean {
 
     private final StockService stockService;
 
-    private final NasdaqBalticProperties nasdaqBalticProperties;
+    private final DividendYieldsProperties dividendYieldsProperties;
 
     @Override
     public void afterPropertiesSet() {
         LOG.info("bootstrapping application");
 
-        if (nasdaqBalticProperties.isUpdateStocksOnStartup()) {
+        if (dividendYieldsProperties.isUpdateStocksOnStartup()) {
             stockService.updateStockInformation();
         }
 
-        if (nasdaqBalticProperties.isUpdateDividendsOnStartup()) {
+        if (dividendYieldsProperties.isUpdateDividendsOnStartup()) {
             int currentYear = LocalDate.now().getYear();
             IntStream.rangeClosed(currentYear - 3, currentYear)
                     .forEach(dividendService::updateDividendInformation);

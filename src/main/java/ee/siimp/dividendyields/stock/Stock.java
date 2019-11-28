@@ -22,7 +22,7 @@ import java.util.List;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"ticker"}, name = "uc_stock_ticker"))
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"dividends", "prices"})
 public class Stock extends BaseEntity {
 
     public static final String SEGMENT_MAIN_LIST = "Baltic Main List";

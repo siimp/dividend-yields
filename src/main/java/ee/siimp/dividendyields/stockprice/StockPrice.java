@@ -4,6 +4,7 @@ import ee.siimp.dividendyields.common.entity.BaseEntity;
 import ee.siimp.dividendyields.stock.Stock;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,4 +37,13 @@ public class StockPrice extends BaseEntity {
     @Min(0)
     @Column(precision = 7, scale = 4)
     private BigDecimal price;
+
+    @Override
+    public String toString() {
+        return "StockPrice{" +
+                "stock=" + stock.getTicker() +
+                ", date=" + date +
+                ", price=" + price +
+                '}';
+    }
 }

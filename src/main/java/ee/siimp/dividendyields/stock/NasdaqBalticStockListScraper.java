@@ -1,50 +1,51 @@
 package ee.siimp.dividendyields.stock;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
+import ee.siimp.dividendyields.common.XlsxScraper;
 import ee.siimp.dividendyields.stock.dto.StockDto;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-class NasdaqBalticStockListScraper {
+class NasdaqBalticStockListScraper extends XlsxScraper<StockDto> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-    private final RestTemplate restTemplate;
 
     private final StockProperties stockProperties;
 
     List<StockDto> loadAllStocks() {
-        List<StockDto> result = new ArrayList<>();
-        try {
-            Iterator<Row> rows = getXslsSheet().rowIterator();
-            rows.next(); // skip header
-            rows.forEachRemaining((Row row) -> {
-                StockDto stockDto = getNewStock(row);
-                result.add(stockDto);
-            });
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            return Collections.emptyList();
-        }
-
+        LOG.info("loading all stocks");
+        List<StockDto> result = processAllRows();
+        LOG.info("finished loading all stocks, result size is {}", result.size());
         return result;
+    }
+
+    @Override
+    public String getEndpoint() {
+        return stockProperties.getEndpoint();
+    }
+
+    @Override
+    protected Resource getStaticResource() {
+        return stockProperties.getStaticList();
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
+    @Override
+    public Optional<StockDto> processRow(Row row) {
+        return Optional.of(getNewStock(row));
     }
 
     private StockDto getNewStock(Row row) {
@@ -60,24 +61,6 @@ class NasdaqBalticStockListScraper {
                 .build();
         LOG.debug("parsed stock {} successfully", ticker);
         return result;
-    }
-
-    private Sheet getXslsSheet() throws IOException {
-        try (InputStream inputStream = getXslsInputStream()) {
-            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(inputStream);
-            return xssfWorkbook.getSheetAt(0);
-        }
-    }
-
-    private InputStream getXslsInputStream() throws IOException {
-        if (stockProperties.getStaticList() != null) {
-            LOG.debug("loading local static file {}", stockProperties.getStaticList().getFilename());
-            return stockProperties.getStaticList().getInputStream();
-        } else {
-            LOG.debug("loading remote file from {}", stockProperties.getEndpoint());
-            String response = restTemplate.getForObject(stockProperties.getEndpoint(), String.class);
-            return new ByteArrayInputStream(response.getBytes());
-        }
     }
 
     enum Header {

@@ -1,37 +1,70 @@
 package ee.siimp.dividendyields.stockprice;
 
-import ee.siimp.dividendyields.common.utils.DateUtils;
-import ee.siimp.dividendyields.stock.Stock;
+import ee.siimp.dividendyields.common.XlsxScraper;
+import ee.siimp.dividendyields.stockprice.dto.StockPriceDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-class NasdaqBalticStockPriceScraper {
+class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static final String ISIN_PARAMETER = "isin";
+
+    private static final String EX_DIVIDEND_DATE_PARAMETER = "exDividendDate";
+
+    private final StockPriceProperties stockPriceProperties;
+
+    public StockPriceDto loadStockPrice(String stockIsin, LocalDate exDividendDate) {
+        LOG.info("getting stock price for {} at {}", stockIsin, exDividendDate);
+        setParameter(ISIN_PARAMETER, stockIsin);
+        setParameter(EX_DIVIDEND_DATE_PARAMETER, exDividendDate);
+        List<StockPriceDto> result = processAllRows();
+        if (!CollectionUtils.isEmpty(result)) {
+            LOG.info("returning stock price info");
+            return result.get(0);
+        } else {
+            LOG.warn("no stock price found");
+            return null;
+        }
+    }
+
+    @Override
+    protected String getEndpoint() {
+        String endpoint = stockPriceProperties.getEndpoint().replace("{ISIN}", (String) getParameter(ISIN_PARAMETER));
+        String date = ((LocalDate) getParameter(EX_DIVIDEND_DATE_PARAMETER)).format(DateTimeFormatter.ISO_DATE);
+
+        return UriComponentsBuilder.fromHttpUrl(endpoint)
+                .queryParam("start", date)
+                .queryParam("end", date)
+                .toUriString();
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
+    @Override
+    protected Optional<StockPriceDto> processRow(Row row) {
+        return Optional.empty();
+    }
+
+
+    /*
     private static final String URI_QUERY_PARAM_INSTRUMENT = "instrument";
     private static final String URI_QUERY_PARAM_DATE_START = "start";
     private static final String URI_QUERY_PARAM_DATE_END = "end";
@@ -123,7 +156,7 @@ class NasdaqBalticStockPriceScraper {
             stockPriceRepository.save(stockPrice);
         }
 
-
     }
+    */
 
 }

@@ -13,5 +13,5 @@ public interface StockPriceRepository extends JpaRepository<StockPrice, Long> {
     @Override
     <S extends StockPrice> S save(S entity);
 
-    Optional<StockPrice> findByStockIdAndDate(Long stockId, LocalDate date);
+    // Optional<StockPrice> findByStockIdAndDate(Long stockId, LocalDate date);
 }

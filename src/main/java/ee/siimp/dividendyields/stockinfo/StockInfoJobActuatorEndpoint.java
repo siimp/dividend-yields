@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Endpoint(id = "stock-info-job")
 @RequiredArgsConstructor
-public class StockPriceInfoJobActuatorEndpoint {
+public class StockInfoJobActuatorEndpoint {
 
     private final StockInfoJob stockInfoJob;
 

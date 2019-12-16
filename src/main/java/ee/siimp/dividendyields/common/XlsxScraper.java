@@ -62,8 +62,8 @@ public abstract class XlsxScraper<T> {
             return getStaticResource().getInputStream();
         } else {
             getLogger().debug("loading remote file from {}", getEndpoint());
-            String response = restTemplate.getForObject(getEndpoint(), String.class);
-            return new ByteArrayInputStream(response.getBytes());
+            byte[] response = restTemplate.getForObject(getEndpoint(), byte[].class);
+            return new ByteArrayInputStream(response);
         }
     }
 

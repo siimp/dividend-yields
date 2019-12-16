@@ -38,32 +38,6 @@ class NasdaqBalticDividendScraper extends XlsxScraper<DividendDto> {
         return result;
     }
 
-    private DividendDto getDividendFromRow(Row row) {
-        if (row == null || row.getCell(Header.EVENT.ordinal()) == null) {
-            return null;
-        }
-
-        String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
-        if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))) {
-            LOG.debug("skipping event {}", event);
-            return null;
-        }
-
-        String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
-        LOG.debug("Parsing dividend event \"{}\" for {}", event, ticker);
-
-        DividendDto result = DividendDto.builder()
-                .ticker(ticker)
-                .issuer(row.getCell(Header.ISSUER.ordinal()).getStringCellValue())
-                .market(row.getCell(Header.MARKET.ordinal()).getStringCellValue())
-                .amount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()))
-                .exDividendDate(DateUtils.convertToLocalDate(row.getCell(Header.DATE.ordinal()).getDateCellValue()))
-                .capitalDecrease(EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))
-                .build();
-        LOG.debug("Parsed successfully dividend event \"{}\" for {}", event, ticker);
-        return result;
-    }
-
     @Override
     protected String getEndpoint() {
         return UriComponentsBuilder.fromHttpUrl(dividendProperties.getEndpoint())
@@ -91,6 +65,32 @@ class NasdaqBalticDividendScraper extends XlsxScraper<DividendDto> {
             LOG.error(e.getMessage(), e);
             return Optional.empty();
         }
+    }
+
+    private DividendDto getDividendFromRow(Row row) {
+        if (row == null || row.getCell(Header.EVENT.ordinal()) == null) {
+            return null;
+        }
+
+        String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
+        if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))) {
+            LOG.debug("skipping event {}", event);
+            return null;
+        }
+
+        String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
+        LOG.debug("Parsing dividend event \"{}\" for {}", event, ticker);
+
+        DividendDto result = DividendDto.builder()
+                .ticker(ticker)
+                .issuer(row.getCell(Header.ISSUER.ordinal()).getStringCellValue())
+                .market(row.getCell(Header.MARKET.ordinal()).getStringCellValue())
+                .amount(BigDecimal.valueOf(row.getCell(Header.AMOUNT.ordinal()).getNumericCellValue()))
+                .exDividendDate(DateUtils.convertToLocalDate(row.getCell(Header.DATE.ordinal()).getDateCellValue()))
+                .capitalDecrease(EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))
+                .build();
+        LOG.debug("Parsed successfully dividend event \"{}\" for {}", event, ticker);
+        return result;
     }
 
     enum Header {

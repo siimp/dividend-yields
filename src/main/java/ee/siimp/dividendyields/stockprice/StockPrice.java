@@ -2,9 +2,7 @@ package ee.siimp.dividendyields.stockprice;
 
 import ee.siimp.dividendyields.common.entity.BaseEntity;
 import ee.siimp.dividendyields.stock.Stock;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +21,9 @@ import java.time.LocalDate;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"stock_id", "date"}, name = "uc_stock_price_stock_id_date"))
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StockPrice extends BaseEntity {
 
     @NotNull

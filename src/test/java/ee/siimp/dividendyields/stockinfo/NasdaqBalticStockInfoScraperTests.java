@@ -1,10 +1,8 @@
 package ee.siimp.dividendyields.stockinfo;
 
 import ee.siimp.dividendyields.IntegrationTest;
-import ee.siimp.dividendyields.stock.Stock;
 import ee.siimp.dividendyields.stock.StockRepository;
 import ee.siimp.dividendyields.stockinfo.dto.StockAndIsinDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,18 +39,6 @@ public class NasdaqBalticStockInfoScraperTests extends IntegrationTest {
 
     @Value("stockInfoApranga.html")
     private Resource stockInfoAprangaHtml;
-
-    @BeforeEach
-    public void setUp() {
-        Stock stock = new Stock();
-        stock.setName(TEST_STOCK_TICKER);
-        stock.setIsin(TEST_STOCK_TICKER);
-        stock.setCurrency(TEST_STOCK_TICKER);
-        stock.setTicker(TEST_STOCK_TICKER);
-        stock.setMarketPlace(TEST_STOCK_TICKER);
-        stock.setSegment(TEST_STOCK_TICKER);
-        stockRepository.save(stock);
-    }
 
     @Test
     public void savesDividendSuccessfully() throws IOException {

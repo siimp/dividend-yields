@@ -24,7 +24,7 @@ public class NasdaqBalticDividendScraperTests {
         DividendProperties dividendProperties = new DividendProperties();
         try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(DIVIDENDS_XLSX)) {
             dividendProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
-            nasdaqBalticDividendScraper = new NasdaqBalticDividendScraper(null, dividendProperties);
+            nasdaqBalticDividendScraper = new NasdaqBalticDividendScraper(dividendProperties);
         }
     }
 

@@ -1,5 +1,6 @@
 package ee.siimp.dividendyields.stock;
 
+import ee.siimp.dividendyields.stock.dto.StockDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
@@ -23,13 +24,13 @@ public class NasdaqBalticStockListScraperTests {
         try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(SHARES_XLSX)) {
             stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
             nasdaqBalticStockListScraper =
-                    new NasdaqBalticStockListScraper(null, stockProperties);
+                    new NasdaqBalticStockListScraper(stockProperties);
         }
     }
 
     @Test
     public void shouldParseSuccessfully() {
-        List<Stock> stocks = nasdaqBalticStockListScraper.loadAllStocks();
+        List<StockDto> stocks = nasdaqBalticStockListScraper.loadAllStocks();
         assertThat(stocks).isNotEmpty();
     }
 }

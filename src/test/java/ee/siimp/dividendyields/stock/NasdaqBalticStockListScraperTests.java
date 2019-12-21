@@ -1,5 +1,6 @@
 package ee.siimp.dividendyields.stock;
 
+import ee.siimp.dividendyields.stock.dto.StockDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,23 +12,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class NasdaqBalticEquityListScraperTests {
+public class NasdaqBalticStockListScraperTests {
 
-    private static NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
+    private static final String SHARES_XLSX = "/shares_20191016.xlsx";
+
+    private static NasdaqBalticStockListScraper nasdaqBalticStockListScraper;
 
     @BeforeAll
     public static void setup() throws IOException {
         StockProperties stockProperties = new StockProperties();
-        try (InputStream inputStream = NasdaqBalticEquityListScraperTests.class.getResourceAsStream("/shares_20191016.xlsx")) {
+        try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(SHARES_XLSX)) {
             stockProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
-            nasdaqBalticEquityListScraper =
-                    new NasdaqBalticEquityListScraper(null, stockProperties);
+            nasdaqBalticStockListScraper =
+                    new NasdaqBalticStockListScraper(stockProperties);
         }
     }
 
     @Test
     public void shouldParseSuccessfully() {
-        List<Stock> stocks = nasdaqBalticEquityListScraper.loadAllStocks();
+        List<StockDto> stocks = nasdaqBalticStockListScraper.scrapeStocks();
         assertThat(stocks).isNotEmpty();
     }
 }

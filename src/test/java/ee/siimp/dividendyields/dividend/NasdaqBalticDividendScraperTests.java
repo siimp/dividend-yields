@@ -1,70 +1,36 @@
 package ee.siimp.dividendyields.dividend;
 
-import ee.siimp.dividendyields.IntegrationTest;
-import ee.siimp.dividendyields.stock.Stock;
-import ee.siimp.dividendyields.stock.StockRepository;
-import org.junit.jupiter.api.BeforeEach;
+import ee.siimp.dividendyields.dividend.dto.DividendDto;
+import ee.siimp.dividendyields.stock.NasdaqBalticStockListScraperTests;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.Resource;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.core.io.ByteArrayResource;
 
-import javax.script.ScriptException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.stream.Collectors;
+import java.io.InputStream;
+import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class NasdaqBalticDividendScraperTests extends IntegrationTest {
+public class NasdaqBalticDividendScraperTests {
 
-    private static final String TEST_STOCK_TICKER = "SFG1T";
+    private static final String DIVIDENDS_XLSX = "/dividends_20191030.xlsx";
 
-    @MockBean
-    private RestTemplate restTemplate;
+    private static NasdaqBalticDividendScraper nasdaqBalticDividendScraper;
 
-    @Autowired
-    private NasdaqBalticDividendScraper nasdaqBalticDividendScraper;
-
-    @Autowired
-    private StockRepository stockRepository;
-
-    @Autowired
-    private DividendRepository dividendRepository;
-
-    @Value("dividendsAndCapitalDecrease2018.html")
-    private Resource dividendsAndCapitalDecrease2018Html;
-
-    @BeforeEach
-    public void setUp() {
-        Stock stock = new Stock();
-        stock.setName(TEST_STOCK_TICKER);
-        stock.setIsin(TEST_STOCK_TICKER);
-        stock.setCurrency(TEST_STOCK_TICKER);
-        stock.setTicker(TEST_STOCK_TICKER);
-        stock.setMarketPlace(TEST_STOCK_TICKER);
-        stock.setSegment(TEST_STOCK_TICKER);
-        stockRepository.save(stock);
+    @BeforeAll
+    public static void setUp() throws IOException {
+        DividendProperties dividendProperties = new DividendProperties();
+        try (InputStream inputStream = NasdaqBalticStockListScraperTests.class.getResourceAsStream(DIVIDENDS_XLSX)) {
+            dividendProperties.setStaticList(new ByteArrayResource(inputStream.readAllBytes()));
+            nasdaqBalticDividendScraper = new NasdaqBalticDividendScraper(dividendProperties);
+        }
     }
 
     @Test
-    public void savesDividendSuccessfully() throws ScriptException, IOException {
-        given(restTemplate.getForObject(any(), eq(String.class)))
-                .willReturn(Files.lines(dividendsAndCapitalDecrease2018Html.getFile().toPath())
-                        .collect(Collectors.joining()));
-        nasdaqBalticDividendScraper.loadYearDividends(2018);
-
-        assertThat(dividendRepository.count()).isEqualTo(2);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 1, 25)).isCapitalDecrease())
-                .isEqualTo(false);
-        assertThat(dividendRepository.findByStockIdAndExDividendDate(1L, LocalDate.of(2018, 7, 16)).isCapitalDecrease())
-                .isEqualTo(true);
+    public void savesDividendSuccessfully() {
+        List<DividendDto> dividends = nasdaqBalticDividendScraper.scrapeYearDividends(2019);
+        assertThat(dividends.size()).isEqualTo(43);
     }
 }

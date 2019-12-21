@@ -25,26 +25,28 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
-    private final NasdaqBalticEquityListScraper nasdaqBalticEquityListScraper;
+    private final NasdaqBalticStockListScraper nasdaqBalticStockListScraper;
 
     public void updateStockInformation() {
-        LOG.info("updating stock infromation");
+        LOG.info("updating stock information");
         List<String> existingStockNames = stockRepository.findAll().stream()
                 .map(Stock::getTicker)
                 .collect(Collectors.toList());
 
-        List<Stock> newStocks = nasdaqBalticEquityListScraper.loadAllStocks().stream()
+        List<Stock> newStocks = nasdaqBalticStockListScraper.scrapeStocks().stream()
+                .map(Stock::of)
                 .filter(it -> !existingStockNames.contains(it.getTicker()))
                 .collect(Collectors.toList());
 
         for (Stock stock : newStocks) {
             Set<ConstraintViolation<Stock>> errors = validator.validate(stock);
             if (CollectionUtils.isEmpty(errors)) {
-                LOG.debug("adding new stock {}", stock);
+                LOG.info("adding new stock {}", stock);
                 stockRepository.save(stock);
             } else {
                 LOG.warn("stock {} validation failed {}", stock, errors);
             }
         }
+        LOG.info("updating stock information finished");
     }
 }

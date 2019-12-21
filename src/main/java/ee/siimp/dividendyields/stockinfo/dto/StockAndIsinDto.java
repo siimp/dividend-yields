@@ -7,7 +7,5 @@ public class StockAndIsinDto {
 
     Long id;
 
-    String segment;
-
     String isin;
 }

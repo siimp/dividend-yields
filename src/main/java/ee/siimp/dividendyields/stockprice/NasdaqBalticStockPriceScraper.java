@@ -1,129 +1,98 @@
 package ee.siimp.dividendyields.stockprice;
 
-import ee.siimp.dividendyields.common.utils.DateUtils;
-import ee.siimp.dividendyields.stock.Stock;
+import ee.siimp.dividendyields.common.XlsxScraper;
+import ee.siimp.dividendyields.stockprice.dto.StockPriceDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-class NasdaqBalticStockPriceScraper {
+class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final String URI_QUERY_PARAM_INSTRUMENT = "instrument";
-    private static final String URI_QUERY_PARAM_DATE_START = "start";
-    private static final String URI_QUERY_PARAM_DATE_END = "end";
-    private static final int MAX_DAYS_TO_TRY_ON_VALUE_ABSENCE = 2;
+    private static final String ISIN_PARAMETER = "isin";
 
-    private final RestTemplate restTemplate;
-
-    private final EntityManager em;
-
-    private final StockPriceRepository stockPriceRepository;
+    private static final String EX_DIVIDEND_DATE_PARAMETER = "exDividendDate";
 
     private final StockPriceProperties stockPriceProperties;
 
-    void loadStockPrice(Long stockId, String stockIsin, LocalDate date) {
+    public Optional<StockPriceDto> scrapeStockPrice(String stockIsin, LocalDate exDividendDate) {
+        LOG.info("getting stock price for {} at {}", stockIsin, exDividendDate);
+        setParameter(ISIN_PARAMETER, stockIsin);
+        setParameter(EX_DIVIDEND_DATE_PARAMETER, exDividendDate);
+        List<StockPriceDto> result = processAllRows();
 
-        if (LocalDate.now().isBefore(date)) {
-            LOG.warn("skipping future date {} for stock id = {}", date, stockId);
-            return;
+        StockPriceDto stockPriceDto = null;
+        if (!CollectionUtils.isEmpty(result)) {
+            stockPriceDto = result.get(0);
         }
 
-        List<CSVRecord> csvRecords = getCsvRecords(stockIsin, date);
-
-        if (CollectionUtils.isEmpty(csvRecords)) {
-            int daysToSubtract = DayOfWeek.MONDAY.equals(date.getDayOfWeek()) ? 3 : 1;
-            for (; daysToSubtract < daysToSubtract + MAX_DAYS_TO_TRY_ON_VALUE_ABSENCE
-                    && CollectionUtils.isEmpty(csvRecords); daysToSubtract++) {
-                LocalDate newDate = date.minusDays(daysToSubtract);
-                LOG.info("using stock price from {} instead of {} for stock id = {}", newDate, date, stockId);
-                csvRecords = getCsvRecords(stockIsin, newDate);
-            }
-        }
-
-        if (!CollectionUtils.isEmpty(csvRecords)) {
-            saveStockPrice(stockId, date, csvRecords);
-        }
+        return Optional.ofNullable(stockPriceDto);
     }
 
-    private List<CSVRecord> getCsvRecords(String stockIsin, LocalDate date) {
-        URI endpoint = getEndpoint(stockIsin, date);
-        LOG.info("loading price for {} from {}", stockIsin, endpoint);
-        String response = restTemplate.getForObject(endpoint, String.class);
+    @Override
+    protected String getEndpoint() {
+        String endpoint = stockPriceProperties.getEndpoint().replace("{ISIN}", (String) getParameter(ISIN_PARAMETER));
+        String date = ((LocalDate) getParameter(EX_DIVIDEND_DATE_PARAMETER)).format(DateTimeFormatter.ISO_DATE);
 
-        return getCsvRecordsFromResponse(response);
+        return UriComponentsBuilder.fromHttpUrl(endpoint)
+                .queryParam("start", date)
+                .queryParam("end", date)
+                .toUriString();
     }
 
-    private List<CSVRecord> getCsvRecordsFromResponse(String response) {
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
+    @Override
+    protected Optional<StockPriceDto> processRow(Row row) {
         try {
-            List<CSVRecord> csvRecords = new CSVParser(new StringReader(response),
-                    NasdaqBalticStockPriceCsv.FORMAT).getRecords();
-            if (CollectionUtils.isEmpty(csvRecords)) {
-                LOG.error("CSV is empty");
-            } else if (csvRecords.size() != 1) {
-                LOG.error("CSV does not contain single record (size = {})", csvRecords.size());
-            } else {
-                return csvRecords;
-            }
-        } catch (IOException | RuntimeException e) {
+            return Optional.ofNullable(getStockPriceFromRow(row));
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-        }
-        return Collections.emptyList();
-    }
-
-    private URI getEndpoint(String stockIsin, LocalDate date) {
-        return UriComponentsBuilder.fromHttpUrl(stockPriceProperties.getEndpoint())
-                .queryParam(URI_QUERY_PARAM_INSTRUMENT, stockIsin)
-                .queryParam(URI_QUERY_PARAM_DATE_START, DateUtils.formatEstonianDate(date))
-                .queryParam(URI_QUERY_PARAM_DATE_END, DateUtils.formatEstonianDate(date))
-                .build().toUri();
-    }
-
-    private void saveStockPrice(Long stockId, LocalDate date, List<CSVRecord> csvRecords) {
-        for (CSVRecord csvRecord : csvRecords) {
-            saveNewStockPrice(stockId, date, new BigDecimal(csvRecord.get(NasdaqBalticStockPriceCsv.Header.LAST)));
+            return Optional.empty();
         }
     }
 
-    private void saveNewStockPrice(Long stockId, LocalDate date, BigDecimal price) {
-        LOG.info("saving stock price {} {} for stock id = {}", price, date, stockId);
-        Optional<StockPrice> stockPriceOptional = stockPriceRepository.findByStockIdAndDate(stockId, date);
-
-        if (stockPriceOptional.isPresent()) {
-            stockPriceOptional.get().setPrice(price);
-            stockPriceRepository.save(stockPriceOptional.get());
-        } else {
-            StockPrice stockPrice = new StockPrice();
-            stockPrice.setDate(date);
-            stockPrice.setPrice(price);
-            stockPrice.setStock(em.getReference(Stock.class, stockId));
-            stockPriceRepository.save(stockPrice);
+    private StockPriceDto getStockPriceFromRow(Row row) {
+        Cell valueCell = row.getCell(Header.AVERAGE.ordinal());
+        if (valueCell == null) {
+            LOG.debug("using open price instead of average");
+            valueCell = row.getCell(Header.OPEN_PRICE.ordinal());
         }
 
+        if (valueCell == null) {
+            LOG.debug("could not get stock price from row");
+            return null;
+        }
 
+        StockPriceDto stockPriceDto = StockPriceDto.builder()
+                .average(BigDecimal.valueOf(valueCell.getNumericCellValue()))
+                .build();
+        LOG.debug("parsed stock price successfully {}", stockPriceDto);
+        return stockPriceDto;
+    }
+
+    enum Header {
+        DATE,
+        AVERAGE,
+        OPEN_PRICE
     }
 
 }

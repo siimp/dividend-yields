@@ -8,7 +8,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class NasdaqbalticApplicationTests {
+public class DividendYieldsApplicationTests {
 
 	@Test
 	public void contextLoads() {

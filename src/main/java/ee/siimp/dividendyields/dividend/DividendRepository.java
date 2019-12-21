@@ -10,14 +10,14 @@ import java.util.List;
 
 public interface DividendRepository extends JpaRepository<Dividend, Long> {
 
-    @Query("select stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
+    @Query("select distinct stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
             "from #{#entityName} dividend " +
             "inner join dividend.stock stock " +
             "left join StockPrice stockPrice on (stockPrice.stock = dividend.stock and stockPrice.date = dividend.exDividendDate) " +
             "where stockPrice is null AND dividend.exDividendDate < CURRENT_DATE")
     List<DividendStockPriceDto> findPastDividendsWithoutStockPriceInfo();
 
-    @Query("select stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
+    @Query("select distinct stock.id as stockId, stock.isin as stockIsin, dividend.exDividendDate as exDividendDate " +
             "from #{#entityName} dividend " +
             "inner join dividend.stock stock " +
             "left join StockPrice stockPrice on (stockPrice.stock = dividend.stock and stockPrice.date = CURRENT_DATE) " +

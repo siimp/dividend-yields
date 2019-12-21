@@ -51,7 +51,7 @@ class StockPriceService {
                 .date(dto.getExDividendDate())
                 .price(stockPriceDto.getAverage())
                 .build();
-        LOG.debug("saving new stock price {}", stockPrice);
+        LOG.debug("saving new stock price {}", stockPriceDto);
         stockPriceRepository.save(stockPrice);
     }
 

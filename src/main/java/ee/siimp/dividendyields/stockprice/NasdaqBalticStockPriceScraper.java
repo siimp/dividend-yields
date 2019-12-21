@@ -3,6 +3,7 @@ package ee.siimp.dividendyields.stockprice;
 import ee.siimp.dividendyields.common.XlsxScraper;
 import ee.siimp.dividendyields.stockprice.dto.StockPriceDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,12 +71,19 @@ class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
     }
 
     private StockPriceDto getStockPriceFromRow(Row row) {
-        if (row.getCell(Header.AVERAGE.ordinal()) == null) {
+        Cell valueCell = row.getCell(Header.AVERAGE.ordinal());
+        if (valueCell == null) {
+            LOG.debug("using open price instead of average");
+            valueCell = row.getCell(Header.OPEN_PRICE.ordinal());
+        }
+
+        if (valueCell == null) {
+            LOG.debug("could not get stock price from row");
             return null;
         }
 
         StockPriceDto stockPriceDto = StockPriceDto.builder()
-                .average(BigDecimal.valueOf(row.getCell(Header.AVERAGE.ordinal()).getNumericCellValue()))
+                .average(BigDecimal.valueOf(valueCell.getNumericCellValue()))
                 .build();
         LOG.debug("parsed stock price successfully {}", stockPriceDto);
         return stockPriceDto;
@@ -83,7 +91,8 @@ class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
 
     enum Header {
         DATE,
-        AVERAGE
+        AVERAGE,
+        OPEN_PRICE
     }
 
 }

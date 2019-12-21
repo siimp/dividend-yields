@@ -2,7 +2,6 @@ package ee.siimp.dividendyields.stock;
 
 import ee.siimp.dividendyields.dividendyield.dto.DividendYieldDto;
 import ee.siimp.dividendyields.stockinfo.StockInfoController;
-import ee.siimp.dividendyields.stockinfo.dto.StockAndIsinDto;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

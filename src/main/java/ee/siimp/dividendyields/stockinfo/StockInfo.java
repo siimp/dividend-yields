@@ -2,6 +2,7 @@ package ee.siimp.dividendyields.stockinfo;
 
 import ee.siimp.dividendyields.common.entity.BaseEntity;
 import ee.siimp.dividendyields.stock.Stock;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ import java.math.BigInteger;
 @Entity
 @Getter
 @Setter
+@Builder
 class StockInfo extends BaseEntity {
 
     @NotNull

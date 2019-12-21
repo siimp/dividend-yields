@@ -1,411 +1,403 @@
 
+
 <!DOCTYPE html>
-<html lang="et">
+<!--[if IE 8 ]><html class="no-js oldie ie8"> <![endif]-->
+<!--[if IE 9 ]><html class="no-js oldie ie9"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html class="no-js" lang="et"> <!--<![endif]-->
 <head>
     <meta charset="utf-8" />
-    <title>Apranga | Aktsiad ja aktsionärid | Nasdaq Balti börs</title>
-
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Apranga | Väärtpaber &mdash; Nasdaq Balti börs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google-site-verification" content="TV6j5F64voeHAE_t_Ub3jmfD2PYnWE4Y3v8zSDO5XOg" />
-    <meta name="keywords" content="" />
-    <meta name="description" content="Apranga – Nasdaq Balti börsi info ettevõtte aktsia hinna, uudiste ja majandusaruannete kohta" />
+    <meta name="twitter:image" content="https://www.nasdaqbaltic.com/static2/ico/favicon-154x154-primary.png" />
+    <meta property="og:image" content="https://www.nasdaqbaltic.com/static2/ico/og_image_social.png">
 
-    <link rel="shortcut icon" href="/static/ico/favicon-primary.ico" />
-    <link rel="icon" type="image/png" href="/static/ico/favicon-16x16-primary.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="/static/ico/favicon-24x24-primary.png" sizes="24x24">
-    <link rel="icon" type="image/png" href="/static/ico/favicon-32x32-primary.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/static/ico/favicon-64x64-primary.png" sizes="64x64">
-    <link rel="icon" type="image/png" href="/static/ico/favicon-154x154-primary.png" sizes="154x154">
-    <link rel="stylesheet" type="text/css" href="/styles/style.css?2019-01-10" />
-    <script>
-        var tradingerror = '';
-        </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/js/jquery.min.1.8.js">\x3C/script>')</script>
+    <link rel="shortcut icon" href="/static2/ico/favicon-primary.ico" />
+    <link rel="icon" type="image/png" href="/static2/ico/favicon-16x16-primary.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/static2/ico/favicon-24x24-primary.png" sizes="24x24">
+    <link rel="icon" type="image/png" href="/static2/ico/favicon-32x32-primary.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/static2/ico/favicon-64x64-primary.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="/static2/ico/favicon-154x154-primary.png" sizes="154x154">
 
-    <link rel="stylesheet" type="text/css" href="/market/css/market.2019-02-21.css" />
-    <link rel="alternate" type="application/rss+xml" title="RSS - NASDAQ OMX announcements" href="/market/?pg=news&amp;rss=1&amp;lang=et" />
+    <link rel="stylesheet" href="/static2/js/bootstrap/css/bootstrap.min.169.css">
 
-    <link rel="stylesheet" type="text/css" media="print" href="/styles/print_new.css" />
+    <!-- <link rel="stylesheet" href="/static2/js/flatpickr/dist/flatpickr.169.css"> -->
 
+    <link rel="stylesheet" href="/static2/main.169.css">
 
-    <script>
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-839294-1']);
-            _gaq.push(['_trackPageview']);
-            _gaq.push(['_trackPageLoadTime']);
-            _gaq.push(['_setVar','lang_et']);
-            _gaq.push(['b._setAccount', 'UA-839294-5']);
-            _gaq.push(['b._trackPageview']);
-            _gaq.push(['b._setVar','lang_et']);
-
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-        </script>
+    <script src="/static2/js/modernizr.169.js"></script>
 </head>
-
-
-<body class="page-template page-template-page-sys_static page-template-page-sys_static-php page page-id-1133 body site-et" >
-
-
-<script async src="//www.googletagmanager.com/gtag/js?id=UA-839294-5"></script>
-<script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-839294-5');
-    </script>
+<body class="site-et" >
 
 
 
-<!-- header + nav start -->
-<div id="header">
-    <div class="wrapper-center clearfix">
-        <div id="logo"><a href="/market/"><img src="/static/logo.png" alt="" /></a></div>
-        <div id="social">
-            <a href="https://www.facebook.com/nasdaqtallinn" target="_blank" class="fb"></a>
-            <a href="https://twitter.com/investmentor" target="_blank" class="tw"></a>
-            <a href="https://www.youtube.com/channel/UCONNkXzMBXciIlAIYVi3jYQ" target="_blank" class="yt"></a>
+<!-- ticker desktop -->
+<div class="ticker-container">
+</div>
+
+<header class="header-container" id="header">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="header-top">
+                    <a href="/et" class="logo">Nasdaq</a>
+                    <div class="smaller-header">
+                        <!-- <div class="tradingclose">5h 03m 22s<span>until close</span></div> -->
+                        <div class="mobile-langs-dropdown dropdown show">
+                            <a class="dropdown-toggle text-uppercase" href="#" role="button" id="mobile-langs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                EST			  </a>
+                            <div class="dropdown-menu" aria-labelledby="mobile-langs">
+                                <a href="/statistics/en/instrument/LT0000102337/security" class="dropdown-item text-uppercase">ENG</a>
+                                <a href="/statistics/lv/instrument/LT0000102337/security" class="dropdown-item text-uppercase">LAT</a>
+                                <a href="/statistics/lt/instrument/LT0000102337/security" class="dropdown-item text-uppercase">LIT</a>
+                            </div>
+                        </div>
+
+                        <a href="#" class="trigger-search"><img src="/static2/img/search.svg" alt="search"></a>
+                        <a href="#" class="trigger-menu"><img src="/static2/img/ico-menu.svg" alt="menu"></a>
+                    </div>
+                    <div class="header-top-right">
+                        <div class="header-top-right-three">
+                            <div class="header-social"><ul><li><a target="_blank" href="https://www.youtube.com/channel/UCONNkXzMBXciIlAIYVi3jYQ/videos"><img alt="youtube" src="/static2/img/ico-youtube-white.svg"></a></li><li><a target="_blank" href="https://www.facebook.com/nasdaqtallinn/"><img alt="facebook" src="/static2/img/ico-fb-white.svg"></a></li><li><a target="_blank" href="https://twitter.com/investmentor?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"><img alt="twitter" src="/static2/img/ico-twitter-white.svg"></a></li>                    <li class="ml-3"><a href="#sitemap" onclick="App.UI.scrollIntoView($('footer .row:first'), 500, 60); return false;"                    ><img class="pr-1" alt="Sisukaart" src="/static2/img/ico-sitemap.svg">                    Sisukaart                </a>            </li>        </ul></div>
+                            <div class="lang-nav dropdown show">
+                                <ul>
+                                    <li>
+                                        <a class="dropdown-toggle" href="/statistics/et/instrument/LT0000102337/security"
+                                           role="button" id="desktop-langs" data-toggle="dropdown"
+                                           title="Eesti"
+                                        >EST</a>
+                                        <ul class="dropdown-menu" aria-labelledby="desktop-langs">
+                                            <li><a href="/statistics/en/instrument/LT0000102337/security"
+                                                   class="dropdown-item"
+                                                   title="English"
+                                            >ENG</a></li>
+                                            <li><a href="/statistics/lv/instrument/LT0000102337/security"
+                                                   class="dropdown-item"
+                                                   title="Latviešu valoda"
+                                            >LAT</a></li>
+                                            <li><a href="/statistics/lt/instrument/LT0000102337/security"
+                                                   class="dropdown-item"
+                                                   title="Lietuviškai"
+                                            >LIT</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="https://nasdaqcsd.com/et" target="_blank" class="ncsd-link">Nasdaq CSD</a>
+                        </div>
+                        <!-- <div class="trading-closes">Trading day closes in: 5h 03m 22s</div> -->
+                    </div>
+                </div>
+                <ul class="header-nav"><li class="a-statistics-shares"><a href="/statistics/et/shares">Aktsiad</a></li><li class="a-statistics-bonds"><a href="/statistics/et/bonds">Võlakirjad</a></li><li class="a-statistics-funds"><a href="/statistics/et/funds">Fondid</a></li><li class="a-statistics-charts"><a href="/statistics/et/charts">Indeksid</a></li><li class="a-statistics-statistics"><a href="/statistics/et/statistics">Statistika</a></li><li class="a-statistics-news"><a href="/statistics/et/news">Börsiteated</a></li><li class="medium"><a href="https://nasdaqbaltic.com/et/alusta-siit/kaasa-kapitali/">Kaasa kapitali</a></li><li class="medium"><a href="https://nasdaqbaltic.com/et/alusta-siit/alusta-investeerimist/">Investeeri</a></li></ul><ul class="header-smallnav"><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-112)" data-toggle-selector="#submenu-112">Kaubeldavad väärtpaberid</a></li><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-439)" data-toggle-selector="#submenu-439">Turuinfo</a></li><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-452)" data-toggle-selector="#submenu-452">Turureeglid</a></li><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-455)" data-toggle-selector="#submenu-455">Alusta siit</a></li><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-464)" data-toggle-selector="#submenu-464">Uudised</a></li><li class=""><a href="javascript:void(0)"  class="elementOpener" data-close-selector=".submenu.active:not(#submenu-469)" data-toggle-selector="#submenu-469">Meist</a></li></ul>	 </div>
         </div>
-        <div id="sites">
-            <div class="site-baltic">
-                <a href="/" class="active">Baltic</a>
-                &mdash;
-                <div id="langs">
-                    <ul>
-                        <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=security&amp;lang=en"
-                               title="English"
-                               class="lang-en "
-                        ></a></li>
-                        <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=security&amp;lang=et"
-                               title="Eesti"
-                               class="lang-et active"
-                        ></a></li>
-                        <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=security&amp;lang=lv"
-                               title="Latviešu valoda"
-                               class="lang-lv "
-                        ></a></li>
-                        <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=security&amp;lang=lt"
-                               title="Lietuviškai"
-                               class="lang-lt "
-                        ></a></li>
-                    </ul>
+    </div>
+
+
+    <div class="header-btm">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="header-btm-inner">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/et" title="Avaleht">Avaleht</a></li>
+                            <li class="breadcrumb-item active">Apranga | Väärtpaber</li>
+                        </ol>
+                        <div class="header-search">
+                            <form action="/et">
+                                <input type="submit" class="submit-hidden" tabindex="-1">
+                                <img src="/static2/img/search.svg" class="trigger-search-desktop"><input type="text" name="s" value="" placeholder="Nimi | ISIN | märksõna | sümbol">
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            | <a href="http://www.nasdaqomxnordic.com">Nordic</a>
-            | <a href="http://www.nasdaq.com">U.S.</a>
-            | <a href="http://www.nasdaqomx.com">Corporate</a>
-            |
-        </div>
-        <div id="search">
-            <form action="/et/" method="get" name="topSearchForm" id="topSearchForm" autocomplete="off">
-                <input type="hidden" name="pg" value="" />
-                <input type="submit" class="submit-hidden" tabindex="-1" />
-                <input type="text" name="sw" class="input-search" placeholder="Ettevõte/lühinimi/ISIN" />
-                või            <input type="text" name="s" class="input-search" placeholder="Sisu" value="" />
-                <div class="gradient-button" id="search-button" role="button" aria-disabled="false"><span>Go</span></div>
-            </form>
-            <!--[if lte IE 9]>
-            <script>
-        $(function(){
-            $(".input-search").placeholder();
-        });
-        </script>
-            <![endif]-->
-            <script type="text/javascript">
-        //<![CDATA[
-        $(function(){
-            var $sf = $("#topSearchForm");
-            $sf.submit(function(e){
-                var $f=$(this), $sw=$('input[name=sw]', $f);
-                if( $sw.val().length && $sw.val() != $sw.attr('placeholder') ){
-                    $f.attr('action','/market/').find('input[name=pg]').val('isearch');
-                }
-            });
-            $("#search-button").click( function(){ $sf.submit(); });
-        });
-        //]]>
-        </script>
         </div>
     </div>
-</div>
-<div id="menu" class="clearfix">
-    <div class="wrapper-center">
-        <div id="nav">
-            <ul id="menu-2-et" class="header-nav"><li id="menu-item-1136" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1136"><a href="/market/?lang=et">Avaleht</a></li>
-                <li id="menu-item-1137" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1137"><a href="#">Aktsiad</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1138" class="a-mw-mainlist menu-item menu-item-type-custom menu-item-object-custom menu-item-1138"><a href="/market/?pg=mainlist&#038;lang=et">Balti aktsiad</a></li>
-                        <li id="menu-item-1139" class="a-mw-issuers menu-item menu-item-type-custom menu-item-object-custom menu-item-1139"><a href="/market/?pg=issuers&#038;lang=et&#038;list%5B%5D=BAMT&#038;list%5B%5D=BAIT">Emitendid</a></li>
-                        <li id="menu-item-1140" class="a-mw-dividends menu-item menu-item-type-custom menu-item-object-custom menu-item-1140"><a href="/market/?pg=dividends&#038;lang=et">Dividendid ja muud väljamaksed</a></li>
-                        <li id="menu-item-1141" class="a-mw-reports menu-item menu-item-type-custom menu-item-object-custom menu-item-1141"><a href="/market/?pg=reports&#038;lang=et">Majandusaruanded</a></li>
-                        <li id="menu-item-1142" class="a-mw-industry menu-item menu-item-type-custom menu-item-object-custom menu-item-1142"><a href="/market/?pg=industry&#038;lang=et">Majandusharud</a></li>
-                        <li id="menu-item-4839" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4839"><a href="/et/nasdaq-tallinna-borsi-ettevotete-noteerimise-ajalugu/">Noteerimisajalugu</a></li>
-                        <li id="menu-item-1143" class="a-mw-issuer_documents menu-item menu-item-type-custom menu-item-object-custom menu-item-1143"><a href="/market/?pg=issuer_documents&#038;lang=et">Emitentide dokumendid</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1144" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1144"><a href="#">Võlakirjad</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1145" class="a-mw-bonds menu-item menu-item-type-custom menu-item-object-custom menu-item-1145"><a href="/market/?pg=bonds&#038;lang=et">Balti võlakirjad</a></li>
-                        <li id="menu-item-1146" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1146"><a href="/market/?pg=issuers&#038;list%5B%5D=BABT&#038;lang=et">Emitendid</a></li>
-                        <li id="menu-item-1147" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1147"><a href="/market/?pg=reports&#038;list%5B%5D=BABT&#038;list%5B%5D=BAFB&#038;lang=et">Majandusaruanded</a></li>
-                        <li id="menu-item-1148" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1148"><a href="/market/?pg=issuer_documents&#038;issuer=&#038;list%5B%5D=BABT&#038;list%5B%5D=BAFB&#038;lang=et">Emitentide dokumendid</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1149" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1149"><a href="#">Fondid</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1150" class="a-mw-trfunds menu-item menu-item-type-custom menu-item-object-custom menu-item-1150"><a href="/market/?pg=trfunds&#038;lang=et">Kaubeldavad fondid</a></li>
-                        <li id="menu-item-1151" class="a-mw-funds_news menu-item menu-item-type-custom menu-item-object-custom menu-item-1151"><a href="/market/?pg=funds_news&#038;lang=et">Teated</a></li>
-                        <li id="menu-item-1152" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1152"><a href="/market/?pg=reports&#038;list%5B%5D=BAFU&#038;lang=et">Majandusaruanded</a></li>
-                        <li id="menu-item-1153" class="a-mw-fc menu-item menu-item-type-custom menu-item-object-custom menu-item-1153"><a href="/market/?pg=fc&#038;lang=et">Fondikeskus</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1154" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1154"><a href="#">Indeksid</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1155" class="a-mw-charts menu-item menu-item-type-custom menu-item-object-custom menu-item-1155"><a href="/market/?pg=charts&#038;lang=et">Balti indeksid</a></li>
-                        <li id="menu-item-4707" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-4707"><a href="/et/nasdaq-balti-indeksiperekond/">Indeksitest</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1157" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1157"><a href="#">Oksjonid</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1158" class="a-mw-rigauctions menu-item menu-item-type-custom menu-item-object-custom menu-item-1158"><a href="/market/?pg=rigauctions&#038;lang=et">Riia oksjonid</a></li>
-                        <li id="menu-item-1159" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1159"><a href="/en/lithuanian-government-debt-auctions/">Vilniuse oksjonid</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1160" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1160"><a href="#">Statistika</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1161" class="a-mw-stats menu-item menu-item-type-custom menu-item-object-custom menu-item-1161"><a href="/market/?pg=stats&#038;lang=et">Kauplemisstatistika</a></li>
-                        <li id="menu-item-1162" class="a-mw-capital menu-item menu-item-type-custom menu-item-object-custom menu-item-1162"><a href="/market/?pg=capital&#038;lang=et">Turukapitalisatsioon</a></li>
-                        <li id="menu-item-1163" class="a-mw-trading menu-item menu-item-type-custom menu-item-object-custom menu-item-1163"><a href="/market/?pg=trading&#038;lang=et">Liikmete kauplemisaktiivsus</a></li>
-                        <li id="menu-item-1164" class="a-mw-bulletins menu-item menu-item-type-custom menu-item-object-custom menu-item-1164"><a href="/market/?pg=bulletins&#038;lang=et">Kuuülevaated</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1165" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1165"><a href="#">Uudised</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1166" class="a-mw-news menu-item menu-item-type-custom menu-item-object-custom menu-item-1166"><a href="/market/?pg=news&#038;lang=et">Börsiteated</a></li>
-                        <li id="menu-item-1167" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1167"><a href="/et/pressiteated/">Pressiteated</a></li>
-                        <li id="menu-item-1168" class="a-mw-calendar menu-item menu-item-type-custom menu-item-object-custom menu-item-1168"><a href="/market/?pg=calendar&#038;lang=et">Investori kalender</a></li>
-                        <li id="menu-item-1169" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1169"><a href="/market/?pg=calendar&#038;holidays=1&#038;lang=et">Kauplemispühad</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1318" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1318"><a href="#">Teenused</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-2008" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2008"><a href="/et/teenused/noteerimine/">Turuletulek</a></li>
-                        <li id="menu-item-2011" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2011"><a href="/et/teenused/kauplemine/">Kauplemine</a></li>
-                        <li id="menu-item-2038" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2038"><a href="/et/teenused/liikmelisus/">Liikmelisus</a></li>
-                        <li id="menu-item-2039" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2039"><a href="/et/teenused/turuinfo/">Turuinfo</a></li>
-                        <li id="menu-item-2041" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2041"><a href="/et/teenused/veebitooted-emitendile/">Veebitooted emitendile</a></li>
-                        <li id="menu-item-2042" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2042"><a href="/et/teenused/veebiseminarid/">Veebiseminarid</a></li>
-                        <li id="menu-item-2043" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2043"><a href="/et/teenused/fondikeskus/">Fondikeskus</a></li>
-                        <li id="menu-item-2044" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2044"><a href="/et/teenused/first-northi-noustajad/">First Northi nõustajad</a></li>
-                        <li id="menu-item-2045" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2045"><a href="/et/teenused/uldkoosolekuteenus/">Üldkoosolekuteenus</a></li>
-                        <li id="menu-item-2047" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2047"><a href="/et/teenused/vaartpaberitest-tulenevad-valjamaksed/">Väärtpaberitest tulenevad väljamaksed</a></li>
-                        <li id="menu-item-2046" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2046"><a href="/et/teenused/reeglid-ja-oigusaktid/">Reeglid ja õigusaktid</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1337" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-1337"><a href="/et/meist/">Meist</a>
-                    <ul class="sub-menu">
-                        <li id="menu-item-1340" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-1340"><a href="/et/meist/balti-vaartpaberiturg/">Nasdaq Baltic</a></li>
-                        <li id="menu-item-1595" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-1595"><a href="/et/meist/raportid/">Raportid</a></li>
-                        <li id="menu-item-1593" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-1593"><a href="/et/meist/sundmused/">Sündmused</a></li>
-                        <li id="menu-item-1629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1629"><a href="/et/meist/jarelevalve/">Järelevalve</a></li>
-                        <li id="menu-item-1626" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1626"><a href="/et/meist/kontaktandmed/">Kontaktid</a></li>
-                    </ul>
-                </li>
-                <li id="menu-item-1170" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1170"><a target="_blank" href="https://nasdaqcsd.com/et">Nasdaq CSD</a></li>
-            </ul>    </div>
+
+
+    <div class="submenu" id="submenu-112" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-4"><h3>Aktsiad</h3><ul><li><a href="/statistics/et/shares">Aktsianimekirjad</a></li><li><a href="/statistics/et/issuers">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/dividends">Dividendid, muud väljamaksed</a></li></ul></div><div class="col-md-4"><h3>Võlakirjad</h3><ul><li><a href="/statistics/et/bonds">Võlakirjanimekirjad</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BABT&#038;lists%5B%5D=BAFB">Kaubeldavad ettevõtted</a></li></ul></div><div class="col-md-4"><h3>Fondid</h3><ul><li><a href="/statistics/et/funds">Fondinimekiri</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BAFU">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/fund_center">Fondikeskus</a></li></ul></div></div></div></div><div class="submenu" id="submenu-439" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-3"><h3>Statistika</h3><ul><li><a href="/statistics/et/statistics">Kauplemisstatistika</a></li><li><a href="/statistics/et/capitalization">Turuväärtus</a></li><li><a href="/statistics/et/bulletins">Kuu-ülevaade</a></li><li><a href="/statistics/et/trading_activity">Maaklerite statistika</a></li></ul></div><div class="col-md-3"><h3>Kauplemine</h3><ul><li><a href="https://nasdaqbaltic.com/et/turuinfo/turgudest/">Turgude nimekiri</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/kauplemispaev/">Kauplemispäev</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/hinnasamm-ja-kauplemiskogus/">Hinnasamm ja kauplemiskogus</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turutegijad/">Turutegijad</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turuinfo-teenus/">Turuinfo teenus</a></li><li><a href="/statistics/et/calendar">Investori kalender</a></li><li><a href="/statistics/et/calendar?filter=1&#038;from=2019-01-01&#038;to=2019-12-31&#038;category=3">Kauplemispühad</a></li></ul></div><div class="col-md-3"><h3>Indeksid</h3><ul><li><a href="/statistics/et/charts">Indeksid</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/indeksitest/">Indeksitest</a></li></ul></div><div class="col-md-3"><h3>Oksjonid</h3><ul><li><a href="/statistics/et/auctions_rig">Riia oksjonid</a></li><li><a href="/statistics/et/auctions_vln/govdebt">Vilniuse oksjonid</a></li></ul></div></div></div></div><div class="submenu" id="submenu-452" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-6"><h3>Reeglid ja hinnad</h3><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/nasdaq-tallinna-borsi-reglement/">Nasdaq Tallinn</a></li><li><a href="/market-regulation/nasdaq-riga-rules/">Nasdaq RIia</a></li><li><a href="/market-regulation/nasdaq-vilnius-rules/">Nasdaq Vilnius</a></li></ul></div><div class="col-md-6"><h3>Järelevalve</h3><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalve/">Turujärelevalve</a></li><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalvekomiteed/">Järelevalvekomisjon</a></li></ul></div></div></div></div><div class="submenu" id="submenu-455" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-3"><h3>Ettevõttele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/kaasa-kapitali/">Kaasa kapitali</a></li></ul></div><div class="col-md-3"><h3>Investorile</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/alusta-investeerimist/">Alusta investeerimist</a></li></ul></div><div class="col-md-3"><h3>Liikmetele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-borsiliikmeks/">Hakka börsiliikmeks</a></li><li><a href="/statistics/et/members">Maaklerid</a></li></ul></div><div class="col-md-3"><h3>First North turu nõustajatele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-first-north-turu-noustajaks/">Hakka nõustajaks</a></li><li><a href="https://nasdaqbaltic.com/et/alusta-siit/ettevotte-first-north-sertifitseeritud-noustajad/">Nõustajate nimekiri</a></li></ul></div></div></div></div><div class="submenu" id="submenu-464" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-4"><h3>Nasdaqi uudised</h3><ul><li><a href="https://nasdaqbaltic.com/et/meediaruum/">Meediaruum</a></li></ul></div><div class="col-md-4"><h3>Ettevõtete uudised</h3><ul><li><a href="/statistics/et/news">Börsiteated</a></li></ul></div><div class="col-md-4"><h3>Kalender</h3><ul><li><a href="/statistics/et/calendar">Investori kalender</a></li></ul></div></div></div></div><div class="submenu" id="submenu-469" data-open-method="slide"  data-close-method="slide"><div class="container"><div class="row"><div class="col-md-6"><h3>Ettevõttest</h3><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-balti-borsid/">Nasdaq Balti börsid</a></li><li><a href="https://nasdaqbaltic.com/et/meist/kontakt/">Kontakt</a></li></ul></div><div class="col-md-6"><h3>Kontorid</h3><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-tallinna-bors/">Nasdaq Tallinn</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-riga/">Nasdaq Riga</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-vilnius/">Nasdaq Vilnius</a></li></ul></div></div></div></div>
+
+</header> <!-- #header -->
+
+
+<section class="lastupdate">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <p>Andmed seisuga: 21.12.2019 20:10 (GMT+2)</p>
+            </div>
+        </div>
     </div>
-</div>
-<!-- //header + nav end -->
-<!-- top gfx -->
-<div class="baltic-gfx-top"></div>
-<!-- //top gfx -->
-
-<div id="wrapper">
-    <script>
-        if(typeof(tradingerror) != "undefined" && tradingerror.length){document.write('<div id="trading-error">'+tradingerror+'</div>');}
-        </script>
-
-    <!-- MARKET START -->
-    <div class="ticker-container"><div class="ticker-content"></div></div>
-    <div id="marketBody" class="clearfix">
-        <script type="text/javascript" src="./js/jquery.tooltip-min.js"></script>
-        <link rel="stylesheet" type="text/css" href="/styles/jquery/jquery-ui.custom.css?1.10.2" />
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-et.js"></script>
-        <!--[if lt IE 9]>
-        <script type="text/javascript" src="js/jquery.corner.js"></script>
-        <script type="text/javascript" language="javascript">
-	//<![CDATA[
-	$(document).ready(function(){
-		$(".ui-corner-all").corner("5px");
-	});
-	//]]>
-	</script>
-	<![endif]-->
-        <script type="text/javascript" src="./js/jquery.marquee.js"></script>
-        <script type="text/javascript" src="./js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="./js/market.2019-02-21.js"></script>
-        <script type="text/javascript">
-//<![CDATA[
-Market.lang = "et";
-Market.currency = "0";
-Market.pg = "details";
-Market.TS = ' ';
-Market.DP = ',';
-Market.Holidays.state = {"XTAL":0,"XRIS":0,"XVSE":0};
-//]]>
-</script>
+</section> <!-- #lastupdate -->
 
 
 
-        <div id="marketHeaderCurrency">
-            <form action="/market/" method="get" name="currencyForm">
-                <ol class="inrow">
-                    <li><input name="currency" type="radio" value="EUR" id="currency_EUR" onclick="this.form.submit()"  /><label for="currency_EUR">EUR</label></li>
-                    <li><input name="currency" type="radio" value="0" id="currency_Orig" onclick="this.form.submit()"  checked="checked" /><label for="currency_Orig">Originaalvaluuta</label></li>
-                </ol>
-                <input type="hidden" name="instrument" value="LT0000102337" /><input type="hidden" name="list" value="2" /><input type="hidden" name="pg" value="details" /><input type="hidden" name="tab" value="security" /><input type="hidden" name="lang" value="et" /><input type="hidden" name="downloadcsv" value="0" />		</form>
-        </div><!-- //marketHeaderCurrency -->
+<section class="block padding0 sharelist-top">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="sharelist-top-left padding40">
+                    <div class="sharelist-top-left-heading textonly">
+                        <h1 class="big-title">Apranga
+                        </h1>
+                        <p>
+                            Vilnius | Balti põhinimekiri									</p>
+                    </div>
 
 
-        <span style="display: none;" title="Andmed seisuga: 15.04.2019 19:59 (GMT+3)" id="marketHeaderDate"></span>
+                    <div class="sharelist-top-company">
+                        <div class="sharelist-top-company-left mobile-alt">
+                            <p class="text16">
+                                <strong>APG1L</strong>
+                                <span class="text-muted text-thin">&nbsp;|&nbsp;</span>
+                                <strong>ISIN LT0000102337</strong>
+                            </p>
 
-        <!-- details -->
-        <div id="marketShareDetail">
+                            <p class="infobadge">
+                                <a data-toggle="tooltip" href="https://nasdaqbaltic.com/et/turuinfo/turutegijad/" class="lp badge badge-primary" title="Likviidsusfondid">LP</a>					</p>
 
-            <!-- headline + logo + back -->
-            <div id="marketShareDetailTitle">
-                <h1>Apranga							</h1>
+                            <p class="text-grey">
+                                Tarbijateenused															&gt;
+                                Jaemüük													</p>
+                        </div>
+                        <a href="/et/alusta-siit/alusta-investeerimist/" class="btn btn-primary">Kauple</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- #container -->
+</section> <!-- #block -->
+
+<section class="sharelist-tabmenu">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/trading?date=2019-12-20"
+                            old-href="#trading"
+                    ><strong>Kauplemine</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/company?date=2019-12-20"
+                            old-href="#company"
+                    ><strong>Ettevõte</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/reports?date=2019-12-20"
+                            old-href="#reports"
+                    ><strong>Aruanded</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/calendar?date=2019-12-20"
+                            old-href="#calendar"
+                    ><strong>Kalender</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/news?date=2019-12-20"
+                            old-href="#news"
+                    ><strong>Uudised</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/security?date=2019-12-20"
+                            old-href="#security"
+                            class="active"
+                    ><strong>Väärtpaber</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/historical?date=2019-12-20"
+                            old-href="#historical"
+                    ><strong>Ajalugu</strong></a></li>
+                    <li><a
+                            href="/statistics/et/instrument/LT0000102337/fact_sheet?date=2019-12-20"
+                            old-href="#fact_sheet"
+                    ><strong>Infoleht</strong></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section> <!-- #sharelist-tabmenu -->
+
+<!-- Trades/Turnover -->
+<section class="block padding10060">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h2 class="block-title">Väärtpaberi informatsioon</h2>
+                <div class="mylisttable tablepadding0 paddingright30">
+
+                    <table class="table">
+                        <tbody>
+
+
+
+                        <tr>
+                            <td class="bold">Nominaal </td>
+                            <td>0,29&nbsp;EUR</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Väärtpaberite arv </td>
+                            <td>55 291 960</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">Noteeritud väärtpaberite arv </td>
+                            <td>55 291 960</td>
+                        </tr>
+
+                        <tr>
+                            <td class="bold">Noteerimise kuupäev </td>
+                            <td>26.05.1997</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+
+
+
+
+                </div>
+            </div>
+
+
+            <div class="col-md-6 col-sm-12">
+
+                <h2 class="block-title">Aktsionäride nimekiri (&#8805; 5%) <br><small>Seisuga 31.12.2018</small></h2>
+
+
+
+                <div class="mylisttable table-responsive-md">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Nimi</th>
+                            <th scope="col">Osalus (%)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <td class="text18">UAB &quot;MG Baltic Investment&quot;</td>
+                            <td class="text16 text-right bold">62,3</td>
+
+                        </tr>
+
+                        <tr>
+                            <td class="text18">UAB &quot;Minvista&quot;</td>
+                            <td class="text16 text-right bold">10,07</td>
+
+                        </tr>
+
+                        <tr>
+                            <td class="text18">Swedbank AS (Estonia) clients</td>
+                            <td class="text16 text-right bold">6,6</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>Considering the financial instruments accounting system in Lithuania, Lithuanian companies’ lists of shareholders owning over 5% of company’s total capital are updated at least 2 times per year – as of April 30 (or as of the end of first calendar quarter, or the registration day of general shareholders’ meeting) and October 31 (or as of the end of the third calendar quarter).</p>
 
             </div>
-            <!-- tabs -->
-            <div class="detailTabs">
-                <ul>			<li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=trading" ><span>Kauplemine</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=historical" ><span>Ajalugu</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=news" ><span>Börsiteated</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=calendar" ><span>Kalender</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=reports" ><span>Aruanded</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=security" class="active"><span>Väärtpaber</span></a></li>
-                    <li><a href="/market/?instrument=LT0000102337&amp;list=2&amp;pg=details&amp;tab=company" ><span>Ettevõttest</span></a></li>
-                </ul>
-                <div class="company-logo"><img src="/market/logo.php?issuer=APG" alt="Apranga" /></div>		</div>
-            <!-- //tabs -->
-            <h2>Väärtpaberi informatsioon</h2>
-            <table cellpadding="0" cellspacing="0" class="contentTable zebra" id="marketShareDetailSecinfoTable">
-                <tbody>
-                <tr>
-                    <td>ISIN </td>
-                    <td class="colTypeText">LT0000102337&nbsp; </td>
-                </tr>
-                <tr>
-                    <td>Väärtpaberi lühinimi </td>
-                    <td class="colTypeText">APG1L&nbsp; </td>
-                </tr>
-                <tr>
-                    <td>Nimekiri/segment&nbsp; </td>
-                    <td class="colTypeText">BALTIC MAIN LIST&nbsp; </td>
-                </tr>
-                <tr>
-                    <td>Emitent&nbsp; </td>
-                    <td class="colTypeText">Apranga (APG)</td>
-                </tr>
-                <tr>
-                    <td>Nominaal </td>
-                    <td class="colTypeText">0,29&nbsp;EUR</td>
-                </tr>
-                <tr>
-                    <td>Emiteeritud väärtpabereid </td>
-                    <td class="colTypeText">55 291 960 </td>
-                </tr>
-                <tr>
-                    <td>Noteeritud väärtpabereid </td>
-                    <td class="colTypeText">55 291 960 </td>
-                </tr>
 
-                <tr>
-                    <td>Noteerimise kuupäev </td>
-                    <td class="colTypeText">26.05.1997&nbsp;</td>
-                </tr>
-                </tbody>
-            </table>
-            <br/>            <h3>Aktsionäride nimekiri (üle 5%) 30.09.2017</h3>
-            <table cellspacing="0" cellpadding="0" class="contentTable" id="marketShareDetailShareholdersTable">
-                <thead>
-                <tr>
-                    <th class="colTypeText">Aktsionär </th>
-                    <th class="colTypeNr">Osalus (%)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td class="colTypeText wrap">UAB &quot;MG Baltic Investment&quot;</td>
-                    <td class="colTypeNr">60,26%</td>
-                </tr>
-                <tr>
-                    <td class="colTypeText wrap">UAB &quot;Minvista&quot;</td>
-                    <td class="colTypeNr">9,61%</td>
-                </tr>
-                <tr>
-                    <td class="colTypeText wrap">Swedbank AS (Estonia) clients</td>
-                    <td class="colTypeNr">8,1%</td>
-                </tr>
-                </tbody>
-            </table>
 
-            <p>Considering the financial instruments accounting system in Lithuania, Lithuanian companies’ lists of shareholders owning over 5% of company’s total capital are updated at least 2 times per year – as of April 30 (or as of the end of first calendar quarter, or the registration day of general shareholders’ meeting) and October 31 (or as of the end of the third calendar quarter).</p>
-            <p class="documentNote footnoteDetails"><!-- --></p>
-            <br class="clear" />
 
         </div>
-        <!-- //details -->
-        <script type="text/javascript">
-	//<![CDATA[
-	$(document).ready(function() {
+    </div> <!-- #container -->
+</section>
 
-		$('table.zebra tr:nth-child(even)').addClass('hl');
-		$('#marketShareDetail .detailTabs a[title]').Tooltip(Market.config.Tooltip);
-	});
-	//]]>
-	</script>
 
-        <div id="detailsSidebar"></div>
 
+
+
+<footer>
+    <div class="container">    <div class="row">      <div class="col-12">        <div class="footer-content"><div class="footer-block">            <h3>Kaubeldavad väärtpaberid</h3><h3>Aktsiad</h3><ul><li><a href="/statistics/et/shares">Aktsianimekirjad</a></li><li><a href="/statistics/et/issuers">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/dividends">Dividendid, muud väljamaksed</a></li></ul><h3>Võlakirjad</h3><ul><li><a href="/statistics/et/bonds">Võlakirjanimekirjad</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BABT&#038;lists%5B%5D=BAFB">Kaubeldavad ettevõtted</a></li></ul><h3>Fondid</h3><ul><li><a href="/statistics/et/funds">Fondinimekiri</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BAFU">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/fund_center">Fondikeskus</a></li></ul></div><div class="footer-block">            <h3>Turuinfo</h3><h3>Statistika</h3><ul><li><a href="/statistics/et/statistics">Kauplemisstatistika</a></li><li><a href="/statistics/et/capitalization">Turuväärtus</a></li><li><a href="/statistics/et/bulletins">Kuu-ülevaade</a></li><li><a href="/statistics/et/trading_activity">Maaklerite statistika</a></li></ul><h3>Kauplemine</h3><ul><li><a href="https://nasdaqbaltic.com/et/turuinfo/turgudest/">Turgude nimekiri</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/kauplemispaev/">Kauplemispäev</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/hinnasamm-ja-kauplemiskogus/">Hinnasamm ja kauplemiskogus</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turutegijad/">Turutegijad</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turuinfo-teenus/">Turuinfo teenus</a></li><li><a href="/statistics/et/calendar">Investori kalender</a></li><li><a href="/statistics/et/calendar?filter=1&#038;from=2019-01-01&#038;to=2019-12-31&#038;category=3">Kauplemispühad</a></li></ul><h3>Indeksid</h3><ul><li><a href="/statistics/et/charts">Indeksid</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/indeksitest/">Indeksitest</a></li></ul><h3>Oksjonid</h3><ul><li><a href="/statistics/et/auctions_rig">Riia oksjonid</a></li><li><a href="/statistics/et/auctions_vln/govdebt">Vilniuse oksjonid</a></li></ul></div><div class="footer-block">            <h3>Turureeglid</h3><h3>Reeglid ja hinnad</h3><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/nasdaq-tallinna-borsi-reglement/">Nasdaq Tallinn</a></li><li><a href="/market-regulation/nasdaq-riga-rules/">Nasdaq RIia</a></li><li><a href="/market-regulation/nasdaq-vilnius-rules/">Nasdaq Vilnius</a></li></ul><h3>Järelevalve</h3><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalve/">Turujärelevalve</a></li><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalvekomiteed/">Järelevalvekomisjon</a></li></ul></div><div class="footer-block">            <h3>Alusta siit</h3><h3>Ettevõttele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/kaasa-kapitali/">Kaasa kapitali</a></li></ul><h3>Investorile</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/alusta-investeerimist/">Alusta investeerimist</a></li></ul><h3>Liikmetele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-borsiliikmeks/">Hakka börsiliikmeks</a></li><li><a href="/statistics/et/members">Maaklerid</a></li></ul><h3>First North turu nõustajatele</h3><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-first-north-turu-noustajaks/">Hakka nõustajaks</a></li><li><a href="https://nasdaqbaltic.com/et/alusta-siit/ettevotte-first-north-sertifitseeritud-noustajad/">Nõustajate nimekiri</a></li></ul></div><div class="footer-block">            <h3>Uudised</h3><h3>Nasdaqi uudised</h3><ul><li><a href="https://nasdaqbaltic.com/et/meediaruum/">Meediaruum</a></li></ul><h3>Ettevõtete uudised</h3><ul><li><a href="/statistics/et/news">Börsiteated</a></li></ul><h3>Kalender</h3><ul><li><a href="/statistics/et/calendar">Investori kalender</a></li></ul>            <h3>Meist</h3><h3>Ettevõttest</h3><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-balti-borsid/">Nasdaq Balti börsid</a></li><li><a href="https://nasdaqbaltic.com/et/meist/kontakt/">Kontakt</a></li></ul><h3>Kontorid</h3><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-tallinna-bors/">Nasdaq Tallinn</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-riga/">Nasdaq Riga</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-vilnius/">Nasdaq Vilnius</a></li></ul></div>        </div>      </div>    </div>  </div>
+    <div class="footer-btm">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <ul><li><a href="https://nasdaqbaltic.com/et/disclaimer-et/">Disclaimer</a></li><li><a href="https://business.nasdaq.com/privacy-statement/">Privacy Policy</a></li></ul>        </div>
+            </div>
+        </div>
     </div>
-    <!-- MARKET END -->
-</div><!-- //wrapper -->
-<div id="bottom-container">
-    <!-- footer links -->
-    <div id="footer" class="wrapper-center">
-        <div id="footer-links">
-            <a href="/et/sisukaart/"
-               class="first"                >Sisukaart</a><a href="/en/disclaimer/"
-        >Disclaimer</a>            <br/>
-            <p>Käesoleval veebilehel kasutatud Nasdaq Balti koondnimetus hõlmab Nasdaq kontserni kuuluvaid turukorraldajaid ja teisi äriühinguid Baltikumi riikides, sealhulgas peamiselt Nasdaq Tallinn AS, Nasdaq Riga A/S ja AB Nasdaq Vilnius ning nende poolt avaldatavaid teateid.</p>
-            <p>© 2019, Nasdaq, Inc. All Rights Reserved.</p>
-        </div>
+</footer>
+
+<div class="mobile-menu d-block d-sm-none">
+    <ul class="mobile-nav-main"><li class="a-statistics-shares"><a href="/statistics/et/shares">Aktsiad</a></li><li class="a-statistics-bonds"><a href="/statistics/et/bonds">Võlakirjad</a></li><li class="a-statistics-funds"><a href="/statistics/et/funds">Fondid</a></li><li class="a-statistics-charts"><a href="/statistics/et/charts">Indeksid</a></li><li class="a-statistics-statistics"><a href="/statistics/et/statistics">Statistika</a></li><li class="a-statistics-news"><a href="/statistics/et/news">Börsiteated</a></li><li class="medium"><a href="https://nasdaqbaltic.com/et/alusta-siit/kaasa-kapitali/">Kaasa kapitali</a></li><li class="medium"><a href="https://nasdaqbaltic.com/et/alusta-siit/alusta-investeerimist/">Investeeri</a></li></ul><div class="mobile-nav"><h4>Kaubeldavad väärtpaberid</h4><div><h5>Aktsiad</h5><ul><li><a href="/statistics/et/shares">Aktsianimekirjad</a></li><li><a href="/statistics/et/issuers">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/dividends">Dividendid, muud väljamaksed</a></li></ul><h5>Võlakirjad</h5><ul><li><a href="/statistics/et/bonds">Võlakirjanimekirjad</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BABT&#038;lists%5B%5D=BAFB">Kaubeldavad ettevõtted</a></li></ul><h5>Fondid</h5><ul><li><a href="/statistics/et/funds">Fondinimekiri</a></li><li><a href="/statistics/et/issuers?filter=1&#038;lists%5B%5D=BAFU">Kaubeldavad ettevõtted</a></li><li><a href="/statistics/et/fund_center">Fondikeskus</a></li></ul></div><h4>Turuinfo</h4><div><h5>Statistika</h5><ul><li><a href="/statistics/et/statistics">Kauplemisstatistika</a></li><li><a href="/statistics/et/capitalization">Turuväärtus</a></li><li><a href="/statistics/et/bulletins">Kuu-ülevaade</a></li><li><a href="/statistics/et/trading_activity">Maaklerite statistika</a></li></ul><h5>Kauplemine</h5><ul><li><a href="https://nasdaqbaltic.com/et/turuinfo/turgudest/">Turgude nimekiri</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/kauplemispaev/">Kauplemispäev</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/hinnasamm-ja-kauplemiskogus/">Hinnasamm ja kauplemiskogus</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turutegijad/">Turutegijad</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/turuinfo-teenus/">Turuinfo teenus</a></li><li><a href="/statistics/et/calendar">Investori kalender</a></li><li><a href="/statistics/et/calendar?filter=1&#038;from=2019-01-01&#038;to=2019-12-31&#038;category=3">Kauplemispühad</a></li></ul><h5>Indeksid</h5><ul><li><a href="/statistics/et/charts">Indeksid</a></li><li><a href="https://nasdaqbaltic.com/et/turuinfo/indeksitest/">Indeksitest</a></li></ul><h5>Oksjonid</h5><ul><li><a href="/statistics/et/auctions_rig">Riia oksjonid</a></li><li><a href="/statistics/et/auctions_vln/govdebt">Vilniuse oksjonid</a></li></ul></div><h4>Turureeglid</h4><div><h5>Reeglid ja hinnad</h5><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/nasdaq-tallinna-borsi-reglement/">Nasdaq Tallinn</a></li><li><a href="/market-regulation/nasdaq-riga-rules/">Nasdaq RIia</a></li><li><a href="/market-regulation/nasdaq-vilnius-rules/">Nasdaq Vilnius</a></li></ul><h5>Järelevalve</h5><ul><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalve/">Turujärelevalve</a></li><li><a href="https://nasdaqbaltic.com/et/tururegulatsioon/jarelevalvekomiteed/">Järelevalvekomisjon</a></li></ul></div><h4>Alusta siit</h4><div><h5>Ettevõttele</h5><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/kaasa-kapitali/">Kaasa kapitali</a></li></ul><h5>Investorile</h5><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/alusta-investeerimist/">Alusta investeerimist</a></li></ul><h5>Liikmetele</h5><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-borsiliikmeks/">Hakka börsiliikmeks</a></li><li><a href="/statistics/et/members">Maaklerid</a></li></ul><h5>First North turu nõustajatele</h5><ul><li><a href="https://nasdaqbaltic.com/et/alusta-siit/hakka-first-north-turu-noustajaks/">Hakka nõustajaks</a></li><li><a href="https://nasdaqbaltic.com/et/alusta-siit/ettevotte-first-north-sertifitseeritud-noustajad/">Nõustajate nimekiri</a></li></ul></div><h4>Uudised</h4><div><h5>Nasdaqi uudised</h5><ul><li><a href="https://nasdaqbaltic.com/et/meediaruum/">Meediaruum</a></li></ul><h5>Ettevõtete uudised</h5><ul><li><a href="/statistics/et/news">Börsiteated</a></li></ul><h5>Kalender</h5><ul><li><a href="/statistics/et/calendar">Investori kalender</a></li></ul></div><h4>Meist</h4><div><h5>Ettevõttest</h5><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-balti-borsid/">Nasdaq Balti börsid</a></li><li><a href="https://nasdaqbaltic.com/et/meist/kontakt/">Kontakt</a></li></ul><h5>Kontorid</h5><ul><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-tallinna-bors/">Nasdaq Tallinn</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-riga/">Nasdaq Riga</a></li><li><a href="https://nasdaqbaltic.com/et/meist/nasdaq-vilnius/">Nasdaq Vilnius</a></li></ul></div>  </div>
+</div>
+
+<div class="mobile-search">
+    <div class="mobile-search-content">
+        <form action="/et" method="get">
+            <input type="text" name="s" value="" placeholder="Nimi | ISIN | märksõna | sümbol">
+            <button type="button"><img src="/static2/img/ico-search-mobile.svg" alt="search"></button>
+        </form>
     </div>
 </div>
 
-
-
+<script src="/static2/js/jquery-2.2.4.min.169.js"></script>
+<script src="/static2/js/bootstrap/js/bootstrap.bundle.min.169.js"></script>
+<script src="/static2/js/jquery.marquee.min.169.js"></script>
+<script src="/static2/js/js.cookie.169.js"></script>
+<script src="/static2/js/nasdaq_app.169.js"></script>
 <script>
-            var gdpr_cookie_exists = (document.cookie.match(/^(?:.*;)?\s*gdpr\s*=\s*([^;]+)(?:.*)?$/)||[,null])[1];
-            if(!gdpr_cookie_exists){
-                document.write(unescape("%3Cscript src='/wp-content/themes/nasdaqbaltic/scripts/gdpr.js' type='text/javascript'%3E%3C/script%3E"));
-            }
-        </script>
+App.lang = 'et';
+App.init();
+$(function(){
+	App.initReady();
+});
+</script>
 
-
-<script src="/js/app.js?2019-01-10"></script>
+<script src="/static2/js/jquery.nav.169.js"></script>
 <script>
-        App.lang = 'et';
-        $(function(){
-            App.init();
-        });
+	$(document).ready(function(){
+
+	    $('.scrollingnav').onePageNav({
+	    	currentClass: 'active',
+	    	changeHash: true,
+	    	scrollSpeed: 750,
+	    	scrollThreshold: 0.5,
+	    	filter: '',
+	    	easing: 'swing',
+	    	begin: function() {
+	    		//I get fired when the animation is starting
+	    	},
+	    	end: function() {
+	    		//I get fired when the animation is ending
+	    	},
+	    	scrollChange: function($currentListItem) {
+	    		//I get fired when you enter a section and I pass the list item of the section
+	    	}
+	    });
+
+	});
     </script>
+
+
+<script>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-839294-1']);
+    _gaq.push(['_trackPageview']);
+    _gaq.push(['_trackPageLoadTime']);
+    _gaq.push(['_setVar','lang_et']);
+    _gaq.push(['b._setAccount', 'UA-839294-5']);
+    _gaq.push(['b._trackPageview']);
+    _gaq.push(['b._setVar','lang_et']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+<script async src="//www.googletagmanager.com/gtag/js?id=UA-839294-5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-839294-5');
+</script>
+
 </body>
 </html>

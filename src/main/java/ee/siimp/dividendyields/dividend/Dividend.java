@@ -41,7 +41,7 @@ public class Dividend extends BaseEntity {
     @Override
     public String toString() {
         return "Dividend{" +
-                "stock=" + stock.getTicker() +
+                "stock=" + stock.getName() +
                 ", exDividendDate=" + exDividendDate +
                 ", amount=" + amount +
                 ", capitalDecrease=" + capitalDecrease +

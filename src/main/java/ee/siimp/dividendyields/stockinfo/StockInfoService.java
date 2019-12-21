@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
@@ -24,17 +23,13 @@ class StockInfoService {
 
     private final StockRepository stockRepository;
 
-    private final StockInfoRepository stockInfoRepository;
-
-    private final EntityManager entityManager;
-
     private final NasdaqBalticStockInfoScraper nasdaqBalticStockInfoScraper;
 
     private final CacheManager cacheManager;
 
     void collectStockInfo() {
         LOG.info("collecting stock info");
-        for (StockAndIsinDto stock : stockRepository.findAllBy(StockAndIsinDto.class)) {
+        for (StockAndIsinDto stock : stockRepository.findAllByStockInfoIsNull(StockAndIsinDto.class)) {
             Optional<StockInfoDto> stockInfoDtoOptional = nasdaqBalticStockInfoScraper.scrapeStockInfo(stock);
             stockInfoDtoOptional.ifPresent(stockInfoDto -> saveStockInfo(stock, stockInfoDto));
             ThreadUtils.randomSleep();
@@ -42,13 +37,18 @@ class StockInfoService {
         cacheManager.getCache(DividendYieldController.CACHE_NAME).clear();
     }
 
-    private void saveStockInfo(StockAndIsinDto stock, StockInfoDto stockInfoDto) {
+    private void saveStockInfo(StockAndIsinDto stockAndIsinDto, StockInfoDto stockInfoDto) {
         StockInfo stockInfo = StockInfo.builder()
-                .stock(entityManager.getReference(Stock.class, stock.getId()))
                 .numberOfSecurities(stockInfoDto.getNumberOfSecurities())
                 .build();
-        LOG.info("saving new stock info {}", stockInfo);
-        stockInfoRepository.save(stockInfo);
+        LOG.info("saving new stock info {}", stockInfoDto);
+
+        Optional<Stock> stockOptional = stockRepository.findById(stockAndIsinDto.getId());
+        if (stockOptional.isPresent()) {
+            Stock stock = stockOptional.get();
+            stock.setStockInfo(stockInfo);
+            stockRepository.save(stock);
+        }
     }
 
 

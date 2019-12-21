@@ -1,6 +1,8 @@
 package ee.siimp.dividendyields.stock;
 
 import ee.siimp.dividendyields.dividendyield.dto.DividendYieldDto;
+import ee.siimp.dividendyields.stockinfo.StockInfoController;
+import ee.siimp.dividendyields.stockinfo.dto.StockAndIsinDto;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +16,8 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     Optional<Long> findIdByTicker(String ticker);
 
     <T> List<T> findAllBy(Class<T> type);
+
+    <T> List<T> findAllByStockInfoIsNull(Class<T> type);
 
     @Query("select stock.name as name, stock.ticker as ticker, stock.isin as isin, " +
             "dividend.exDividendDate as exDividendDate, dividend.amount as dividendAmount, dividend.capitalDecrease as capitalDecrease, " +
@@ -45,7 +49,8 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
             "order by dividendYield desc")
     List<DividendYieldDto> findAllWithFutureDividendYields();
 
-    @CacheEvict(cacheNames = {StockController.CACHE_NAME}, allEntries = true)
+    @CacheEvict(cacheNames = {StockController.CACHE_NAME, StockInfoController.CACHE_NAME}, allEntries = true)
     @Override
     <S extends Stock> S save(S entity);
+
 }

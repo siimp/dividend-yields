@@ -31,4 +31,5 @@ public class StockController {
 class StockDto {
     String name;
     String ticker;
+    String segment;
 }

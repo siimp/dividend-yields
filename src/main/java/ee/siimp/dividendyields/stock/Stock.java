@@ -1,9 +1,6 @@
 package ee.siimp.dividendyields.stock;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +8,7 @@ import ee.siimp.dividendyields.common.entity.BaseEntity;
 
 import ee.siimp.dividendyields.dividend.Dividend;
 import ee.siimp.dividendyields.stock.dto.StockDto;
+import ee.siimp.dividendyields.stockinfo.StockInfo;
 import ee.siimp.dividendyields.stockprice.StockPrice;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,6 +56,10 @@ public class Stock extends BaseEntity {
 
     @OneToMany(mappedBy = "stock")
     private List<StockPrice> prices;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id")
+    private StockInfo stockInfo;
 
     static Stock of(StockDto dto) {
         Stock stock = new Stock();

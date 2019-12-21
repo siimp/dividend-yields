@@ -74,12 +74,18 @@ class NasdaqBalticDividendScraper extends XlsxScraper<DividendDto> {
 
         String event = row.getCell(Header.EVENT.ordinal()).getStringCellValue();
         if (!(EVENT_DIVIDEND_EX_DATE.equals(event) || EVENT_CAPITAL_DECREASE_EX_DATE.equals(event))) {
-            LOG.debug("skipping event {}", event);
+            LOG.trace("skipping event {}", event);
+            return null;
+        }
+
+        if (row.getCell(Header.TICKER.ordinal()) == null || row.getCell(Header.AMOUNT.ordinal()) == null) {
+            LOG.debug("skipping event {}, because missing ticker or amount value", event);
             return null;
         }
 
         String ticker = row.getCell(Header.TICKER.ordinal()).getStringCellValue();
         LOG.debug("Parsing dividend event \"{}\" for {}", event, ticker);
+
 
         DividendDto result = DividendDto.builder()
                 .ticker(ticker)

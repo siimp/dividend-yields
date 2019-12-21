@@ -70,6 +70,10 @@ class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
     }
 
     private StockPriceDto getStockPriceFromRow(Row row) {
+        if (row.getCell(Header.AVERAGE.ordinal()) == null) {
+            return null;
+        }
+
         StockPriceDto stockPriceDto = StockPriceDto.builder()
                 .average(BigDecimal.valueOf(row.getCell(Header.AVERAGE.ordinal()).getNumericCellValue()))
                 .build();

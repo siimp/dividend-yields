@@ -9,11 +9,18 @@
         </layout>
     </appender>
 
-    <logger name="ee.siimp" level="info" additivity="false">
+    <logger name="ee.siimp" level="debug" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 
     <root level="error">
         <appender-ref ref="Console" />
     </root>
+
+
+    <springProfile name="production">
+        <logger name="ee.siimp" level="info" additivity="false">
+            <appender-ref ref="Console" />
+        </logger>
+    </springProfile>
 </configuration>

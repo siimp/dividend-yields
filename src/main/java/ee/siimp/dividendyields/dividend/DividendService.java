@@ -45,7 +45,7 @@ public class DividendService {
                 .stream().collect(Collectors.toMap(StockIdTickerDto::getTicker, StockIdTickerDto::getId));
 
         List<DividendTickerExDividendDateDto> existingDividends = getExistingDividends();
-        List<Dividend> newDividends = nasdaqBalticDividendScraper.loadYearDividends(year).stream()
+        List<Dividend> newDividends = nasdaqBalticDividendScraper.scrapeYearDividends(year).stream()
                 .filter(dto -> !exists(dto, existingDividends))
                 .filter(dto -> stockExists(dto, stockIds))
                 .map(dto -> toDividend(dto, stockIds))

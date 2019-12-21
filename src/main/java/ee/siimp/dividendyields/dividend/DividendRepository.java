@@ -24,7 +24,7 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
             "where stockPrice is null AND dividend.exDividendDate >= CURRENT_DATE")
     List<DividendStockPriceDto> findFutureDividendsWithoutStockPriceInfo();
 
-    @CacheEvict(cacheNames = DividendYieldController.CACHE_NAME, allEntries = true)
+    @CacheEvict(cacheNames = {DividendYieldController.CACHE_NAME, DividendController.CACHE_NAME}, allEntries = true)
     @Override
     <S extends Dividend> S save(S entity);
 

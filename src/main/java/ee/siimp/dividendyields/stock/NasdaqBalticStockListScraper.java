@@ -21,7 +21,7 @@ class NasdaqBalticStockListScraper extends XlsxScraper<StockDto> {
 
     private final StockProperties stockProperties;
 
-    List<StockDto> loadAllStocks() {
+    List<StockDto> scrapeStocks() {
         LOG.info("loading all stocks");
         List<StockDto> result = processAllRows();
         LOG.info("finished loading all stocks, result size is {}", result.size());

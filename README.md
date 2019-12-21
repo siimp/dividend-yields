@@ -15,3 +15,18 @@ https://github.com/siimp/siimp.ee.git
 * http://localhost:8080/actuator/stock-info-job
 
 
+## Api request samples
+
+### Stock
+http://localhost:8080/stock
+
+### Dividend
+http://localhost:8080/dividend
+
+### DividendYield
+http://localhost:8080/dividend-yield?year=2019
+http://localhost:8080/dividend-yield/future
+
+
+
+

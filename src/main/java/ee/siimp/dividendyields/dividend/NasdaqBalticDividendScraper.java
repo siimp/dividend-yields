@@ -30,7 +30,7 @@ class NasdaqBalticDividendScraper extends XlsxScraper<DividendDto> {
 
     private static final String YEAR_PARAMETER = "year";
 
-    List<DividendDto> loadYearDividends(int year) {
+    List<DividendDto> scrapeYearDividends(int year) {
         setParameter(YEAR_PARAMETER, year);
         LOG.info("loading dividends by year {}", year);
         List<DividendDto> result = processAllRows();

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +35,10 @@ class StockPriceService {
                 dividendRepository.findPastDividendsWithoutStockPriceInfo();
         LOG.info("{} past dividends are without stock price info", pastDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : pastDividendsWithoutStockPriceInfo) {
-            StockPriceDto stockPriceDto = nasdaqBalticStockPriceScraper
-                    .loadStockPrice(dto.getStockIsin(), dto.getExDividendDate());
+            Optional<StockPriceDto> stockPriceDtoOptional = nasdaqBalticStockPriceScraper
+                    .scrapeStockPrice(dto.getStockIsin(), dto.getExDividendDate());
 
-            if (stockPriceDto != null) {
-                saveStockPrice(dto, stockPriceDto);
-            }
+            stockPriceDtoOptional.ifPresent(stockPriceDto -> saveStockPrice(dto, stockPriceDto));
 
             ThreadUtils.randomSleep();
         }

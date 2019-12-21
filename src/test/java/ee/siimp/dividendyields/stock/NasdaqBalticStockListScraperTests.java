@@ -30,7 +30,7 @@ public class NasdaqBalticStockListScraperTests {
 
     @Test
     public void shouldParseSuccessfully() {
-        List<StockDto> stocks = nasdaqBalticStockListScraper.loadAllStocks();
+        List<StockDto> stocks = nasdaqBalticStockListScraper.scrapeStocks();
         assertThat(stocks).isNotEmpty();
     }
 }

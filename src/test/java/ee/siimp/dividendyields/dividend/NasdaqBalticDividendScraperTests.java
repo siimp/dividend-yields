@@ -30,7 +30,7 @@ public class NasdaqBalticDividendScraperTests {
 
     @Test
     public void savesDividendSuccessfully() {
-        List<DividendDto> dividends = nasdaqBalticDividendScraper.loadYearDividends(2019);
+        List<DividendDto> dividends = nasdaqBalticDividendScraper.scrapeYearDividends(2019);
         assertThat(dividends.size()).isEqualTo(43);
     }
 }

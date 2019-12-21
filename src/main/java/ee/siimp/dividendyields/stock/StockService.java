@@ -33,7 +33,7 @@ public class StockService {
                 .map(Stock::getTicker)
                 .collect(Collectors.toList());
 
-        List<Stock> newStocks = nasdaqBalticStockListScraper.loadAllStocks().stream()
+        List<Stock> newStocks = nasdaqBalticStockListScraper.scrapeStocks().stream()
                 .map(Stock::of)
                 .filter(it -> !existingStockNames.contains(it.getTicker()))
                 .collect(Collectors.toList());

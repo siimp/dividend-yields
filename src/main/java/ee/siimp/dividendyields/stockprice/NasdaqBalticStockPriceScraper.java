@@ -29,18 +29,18 @@ class NasdaqBalticStockPriceScraper extends XlsxScraper<StockPriceDto>  {
 
     private final StockPriceProperties stockPriceProperties;
 
-    public StockPriceDto loadStockPrice(String stockIsin, LocalDate exDividendDate) {
+    public Optional<StockPriceDto> scrapeStockPrice(String stockIsin, LocalDate exDividendDate) {
         LOG.info("getting stock price for {} at {}", stockIsin, exDividendDate);
         setParameter(ISIN_PARAMETER, stockIsin);
         setParameter(EX_DIVIDEND_DATE_PARAMETER, exDividendDate);
         List<StockPriceDto> result = processAllRows();
+
+        StockPriceDto stockPriceDto = null;
         if (!CollectionUtils.isEmpty(result)) {
-            LOG.info("returning stock price info");
-            return result.get(0);
-        } else {
-            LOG.warn("no stock price found");
-            return null;
+            stockPriceDto = result.get(0);
         }
+
+        return Optional.ofNullable(stockPriceDto);
     }
 
     @Override

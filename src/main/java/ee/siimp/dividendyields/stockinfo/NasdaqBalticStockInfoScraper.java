@@ -59,7 +59,7 @@ class NasdaqBalticStockInfoScraper {
         int valueBeginIndex = labelAndValue.indexOf(valueBeginToken);
         int valueEndIndex = labelAndValue.indexOf("</td>", valueBeginIndex);
         String value = labelAndValue.substring(valueBeginIndex + valueBeginToken.length(),
-                valueEndIndex).replaceAll(" ", "");
+                valueEndIndex).replaceAll("\\p{Space}", "");
 
         LOG.info("read number of securities value {}", value);
 

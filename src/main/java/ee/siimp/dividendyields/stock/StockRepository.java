@@ -42,7 +42,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
             "inner join Dividend dividend ON dividend.stock = stock " +
             "inner join StockPrice stockPrice ON (stockPrice.stock = stock AND stockPrice.date = CURRENT_DATE) " +
             "left join StockPrice yesterdayStockPrice ON (yesterdayStockPrice.stock = stock AND yesterdayStockPrice.date = (CURRENT_DATE - 1)) " +
-            "left join StockInfo stockInfo ON  (stockInfo.stock = stock) " +
+            "left join StockInfo stockInfo ON (stockInfo.stock = stock) " +
             "where YEAR(dividend.exDividendDate) = YEAR(CURRENT_DATE) and " +
             "dividend.exDividendDate > CURRENT_DATE " +
             "order by dividendYield desc")

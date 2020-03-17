@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,20 +36,22 @@ class StockPriceService {
                 dividendRepository.findPastDividendsWithoutStockPriceInfo();
         LOG.info("{} past dividends are without stock price info", pastDividendsWithoutStockPriceInfo.size());
         for (DividendStockPriceDto dto : pastDividendsWithoutStockPriceInfo) {
+            LocalDate stockPriceDate = dto.getExDividendDate();
             Optional<StockPriceDto> stockPriceDtoOptional = nasdaqBalticStockPriceScraper
-                    .scrapeStockPrice(dto.getStockIsin(), dto.getExDividendDate());
+                    .scrapeStockPrice(dto.getStockIsin(), stockPriceDate);
 
-            stockPriceDtoOptional.ifPresent(stockPriceDto -> saveStockPrice(dto, stockPriceDto));
+            stockPriceDtoOptional.ifPresent(stockPriceDto ->
+                    saveStockPrice(dto.getStockId(), stockPriceDate, stockPriceDto));
 
             ThreadUtils.randomSleep();
         }
     }
 
-    private void saveStockPrice(DividendStockPriceDto dto, StockPriceDto stockPriceDto) {
+    private void saveStockPrice(Long stockId, LocalDate stockPriceDate, StockPriceDto stockPriceDto) {
         LOG.info("saving new stock price {}", stockPriceDto);
         StockPrice stockPrice = StockPrice.builder()
-                .stock(entityManager.getReference(Stock.class, dto.getStockId()))
-                .date(dto.getExDividendDate())
+                .stock(entityManager.getReference(Stock.class, stockId))
+                .date(stockPriceDate)
                 .price(stockPriceDto.getAverage())
                 .build();
         LOG.debug("saving new stock price {}", stockPriceDto);
@@ -56,6 +59,23 @@ class StockPriceService {
     }
 
     public void collectCurrentStockPricesForFutureDividends() {
-        LOG.warn("collectCurrentStockPricesForFutureDividends unimplemented!!!");
+        LOG.warn("collecting stock prices for future dividends");
+
+        List<DividendStockPriceDto> futureDividends =
+                dividendRepository.findFutureDividendsWithoutStockPriceInfo();
+
+
+        LOG.info("{} future dividends are without stock price info", futureDividends.size());
+
+        LocalDate stockPriceDate = LocalDate.now();
+        for (DividendStockPriceDto futureDividend : futureDividends) {
+            Optional<StockPriceDto> stockPriceDtoOptional = nasdaqBalticStockPriceScraper
+                    .scrapeStockPrice(futureDividend.getStockIsin(), stockPriceDate);
+
+            stockPriceDtoOptional.ifPresent(stockPriceDto ->
+                    saveStockPrice(futureDividend.getStockId(), stockPriceDate, stockPriceDto));
+
+            ThreadUtils.randomSleep();
+        }
     }
 }

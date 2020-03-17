@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface DividendRepository extends JpaRepository<Dividend, Long> {
@@ -29,4 +30,6 @@ public interface DividendRepository extends JpaRepository<Dividend, Long> {
     <S extends Dividend> S save(S entity);
 
     <T> List<T> findAllBy(Class<T> type);
+
+    <T> List<T> findAllByExDividendDateGreaterThanEqual(LocalDate localDate, Class<T> type);
 }

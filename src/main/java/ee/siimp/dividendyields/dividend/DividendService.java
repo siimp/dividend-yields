@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class DividendService {
         Map<String, Long> stockIds = stockRepository.findAllBy(StockIdTickerDto.class)
                 .stream().collect(Collectors.toMap(StockIdTickerDto::getTicker, StockIdTickerDto::getId));
 
-        List<DividendTickerExDividendDateDto> existingDividends = getExistingDividends();
+        List<DividendTickerExDividendDateDto> existingDividends = getExistingDividendsByYear(year);
         List<Dividend> newDividends = nasdaqBalticDividendScraper.scrapeYearDividends(year).stream()
                 .filter(dto -> !exists(dto, existingDividends))
                 .filter(dto -> stockExists(dto, stockIds))
@@ -68,8 +69,9 @@ public class DividendService {
         return false;
     }
 
-    private List<DividendTickerExDividendDateDto> getExistingDividends() {
-        return dividendRepository.findAllBy(DividendTickerExDividendDateDto.class);
+    private List<DividendTickerExDividendDateDto> getExistingDividendsByYear(int year) {
+        return dividendRepository.findAllByExDividendDateGreaterThanEqual(
+                LocalDate.of(year, 1, 1), DividendTickerExDividendDateDto.class);
     }
 
     private Dividend toDividend(DividendDto dto, Map<String, Long> stockIds) {

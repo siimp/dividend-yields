@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  postgresql_database:
+    image: postgres:14.3-alpine
+    environment:
+      - POSTGRES_USER=dividend-yields
+      - POSTGRES_PASSWORD=dividend-yields
+      - POSTGRES_DB=dividend-yields
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./volumes/postgresql:/var/lib/postgresql/data
+    networks:
+      - dividend-yields-network
+networks:
+  dividend-yields-network:
+    driver: bridge

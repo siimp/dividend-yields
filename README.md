@@ -33,4 +33,9 @@ https://github.com/siimp/siimp.ee.git
 * http://localhost:8080/actuator/stock-info-job
 
 
+## Development
+```
+docker compose up
+```
+
 

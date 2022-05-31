@@ -17,4 +17,6 @@ public class DividendYieldsProperties {
 
     private boolean updateDividendsOnStartup;
 
+    private boolean updateStockPriceOnStartup;
+
 }

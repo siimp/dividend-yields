@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-class StockPriceService {
+public class StockPriceService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -30,7 +30,7 @@ class StockPriceService {
 
     private final NasdaqBalticStockPriceScraper nasdaqBalticStockPriceScraper;
 
-    void collectStockPricesAtExDividend() {
+    public void collectStockPricesAtExDividend() {
         LOG.info("collecting stock prices for past dividends");
         List<DividendStockPriceDto> pastDividendsWithoutStockPriceInfo =
                 dividendRepository.findPastDividendsWithoutStockPriceInfo();

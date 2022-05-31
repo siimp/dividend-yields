@@ -2,6 +2,7 @@ package ee.siimp.dividendyields;
 
 import ee.siimp.dividendyields.dividend.DividendService;
 import ee.siimp.dividendyields.stock.StockService;
+import ee.siimp.dividendyields.stockprice.StockPriceService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,8 @@ public class ApplicationBootstrap implements InitializingBean {
 
     private final DividendYieldsProperties dividendYieldsProperties;
 
+    private final StockPriceService stockPriceService;
+
     @Override
     public void afterPropertiesSet() {
         LOG.info("bootstrapping application");
@@ -36,6 +39,11 @@ public class ApplicationBootstrap implements InitializingBean {
             int currentYear = LocalDate.now().getYear();
             IntStream.rangeClosed(currentYear - 3, currentYear)
                     .forEach(dividendService::updateDividendInformation);
+        }
+
+        if (dividendYieldsProperties.isUpdateStockPriceOnStartup()) {
+            stockPriceService.collectStockPricesAtExDividend();
+            stockPriceService.collectCurrentStockPricesForFutureDividends();
         }
 
         LOG.info("bootstrapping finished");

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>/app/log/dividend-yields-scraper.txt</file>
+        <append>true</append>
+        <encoder>
+            <Pattern>
+                %date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} %-5level [%thread] %logger{36}: %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
@@ -21,6 +31,7 @@
     <springProfile name="production">
         <logger name="ee.siimp" level="info" additivity="false">
             <appender-ref ref="Console" />
+            <appender-ref ref="File" />
         </logger>
     </springProfile>
 </configuration>

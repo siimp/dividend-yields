@@ -50,7 +50,7 @@ public class DividendService {
                 .filter(dto -> !exists(dto, existingDividends))
                 .filter(dto -> stockExists(dto, stockIds))
                 .map(dto -> toDividend(dto, stockIds))
-                .collect(Collectors.toList());
+                .toList();
         saveDividends(newDividends);
     }
 

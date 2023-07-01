@@ -40,7 +40,7 @@ public abstract class XlsxScraper<T> {
                 Optional<T> optionalObject = processRow(row);
                 optionalObject.ifPresent(result::add);
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             getLogger().error(e.getMessage(), e);
             return Collections.emptyList();
         }

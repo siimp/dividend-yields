@@ -38,4 +38,13 @@ https://github.com/siimp/siimp.ee.git
 docker compose up
 ```
 
+## With podman
+```
+podman run --name dividend-yields-postgres --rm -p 5432:5432 \
+-e POSTGRES_USER=dividend-yields \
+-e POSTGRES_PASSWORD=dividend-yields \
+-e POSTGRES_DB=dividend-yields \
+-v ./volumes/postgresql:/var/lib/postgresql/data \
+docker.io/library/postgres:14.3-alpine
+```
 
